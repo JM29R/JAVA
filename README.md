@@ -1,1 +1,11 @@
-# JAVA
+# PROYECTOS- PRACTICAS DE JAVA EN EL CUAL MOSTRARE MI PROCESO DE APRENDIZAJE Y APLICACION DE JAVA COMO LENGUAJE DE PROGRAMACION. SE CONFORMARA POR:
+---------------------------------------------------------------------------------------------------------------------------------------------
+- Variables, tipos de datos y estructuras de control  
+- Programación Orientada a Objetos (POO)  
+- Herencia, polimorfismo, interfaces y abstracción  
+- Manejo de errores y excepciones  
+- Archivos y flujo de datos (I/O)  
+- Colecciones y generics  
+- APIs, JSON y conexión con bases de datos  
+- Introducción a frameworks y herramientas (Spring, Maven, etc.)
+---------------------------------------------------------------------------------------------------------------------------------------------

@@ -8,7 +8,7 @@ Es un ejercicio básico realizado durante el curso de Alura Latam para practicar
 
 ## Tecnologías utilizadas
 
--Intellij IDEA
+- Intellij IDEA
 - Java
 - Git & GitHub
 

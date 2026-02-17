@@ -38,8 +38,8 @@
 * -----  resources/
 * -----  application.properties # Configuración DB y API Keys
 * ----- db/migration # Scripts Flyway para inicializar tablas
-* ---- pom.xml
-* ---- README.md
+* - pom.xml
+* - README.md
 
 
 ## Uso del Chat

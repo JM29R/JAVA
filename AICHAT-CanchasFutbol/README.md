@@ -22,6 +22,9 @@
 5. **Integración con Groq**: utiliza la capa gratuita de Groq para procesar intenciones y cambia automáticamente entre modelos si se alcanza el límite de llamadas gratuitas.
 
 ## Estructura del Proyecto
+
+
+
 aichat/
 ├─ src/
 │ ├─ main/
@@ -37,6 +40,8 @@ aichat/
 │ │ └─ db/migration # Scripts Flyway para inicializar tablas
 ├─ pom.xml
 └─ README.md
+
+
 ## Uso del Chat
 Enviar un mensaje por WhatsApp y el sistema lo interpretara como:
 Intencion: reservar

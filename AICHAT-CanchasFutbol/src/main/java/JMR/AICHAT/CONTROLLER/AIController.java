@@ -18,8 +18,10 @@ public class AIController {
 
     @PostMapping("/chat")
     public ResponseEntity<String> reservarConAI(@RequestBody MensajeRequest request) {
+        String Intencion = groqService.InterpretarIntencion(request);;
 
-        String Intencion = groqService.InterpretarIntencion(request);
+        System.out.println("[" + Intencion + "]");
+        System.out.println(Intencion.length());
         switch (Intencion) {
             case "CREAR":
                 String respuesta = groqService.CrearReserva(request);
@@ -34,8 +36,19 @@ public class AIController {
                 String respuesta4 = groqService.ConsultarReserva(request);
                 return ResponseEntity.ok(respuesta4);
             default:
-                return ResponseEntity.badRequest().build();
+                String respuesta5 = """
+                        No se capto la consulta, podrias ser mas especifico?
+                        Utiliza:
+                        Cancha:
+                        Hora:
+                        Fecha:
+                        Intencion:(reservar, cancelar, consultar, modificar)
+                        """;
+                return ResponseEntity.ok(respuesta5);
+
+
         }
+
 
     }
 

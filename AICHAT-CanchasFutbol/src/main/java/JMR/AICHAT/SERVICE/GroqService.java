@@ -32,6 +32,11 @@ public class GroqService {
         this.chatClient = chatClientBuilder.build();
     }
 
+    private String limpiarIntencion(String raw) {
+        if (raw == null) return "";
+        return raw.replace("\"", "").trim().toUpperCase();
+    }
+
     public String InterpretarIntencion(MensajeRequest mensajeRequest) {
         String prompt= """
                  Sos un asistente de reservas de canchas de fútbol.
@@ -54,13 +59,14 @@ public class GroqService {
                         Mensaje del usuario: """+mensajeRequest;
 
 
-        String Intencion = chatClient.prompt()
+        String json = chatClient.prompt()
                 .user(prompt)
                 .call()
                 .content();
-        return Intencion;
-
-
+        int start = json.indexOf(":")+1 ;
+        int end = json.indexOf("}");
+        String Intencion = json.substring(start, end);
+        return limpiarIntencion(Intencion);
     }
 
 

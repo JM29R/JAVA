@@ -25,21 +25,21 @@
 
 
 
-aichat/
-├─ src/
-│ ├─ main/
-│ │ ├─ java/
-│ │ │ └─ jmr/aichat/
-│ │ │ ├─ CANCHAS/ # Entidad JPA.
-│ │ │ ├─ CONTROLLER/ # Endpoints REST (ej. /chat)
-│ │ │ ├─ Inteligencia Artifical/ # RECORDS para AI
-│ │ │ ├─ RESERVAS/ # Entidad JPA.
-│ │ │ ├─ SERVICE/ # Lógica de negocio y comunicación con Groq
-│ │ └─ resources/
-│ │ ├─ application.properties # Configuración DB y API Keys
-│ │ └─ db/migration # Scripts Flyway para inicializar tablas
-├─ pom.xml
-└─ README.md
+* aichat/
+* -src/
+* -- main/
+* --- java/
+* ---- jmr/aichat/
+* ----- CANCHAS/ # Entidad JPA.
+* -----  CONTROLLER/ # Endpoints REST (ej. /chat)
+* -----  Inteligencia Artifical/ # RECORDS para AI
+* -----  RESERVAS/ # Entidad JPA.
+* -----  SERVICE/ # Lógica de negocio y comunicación con Groq
+* -----  resources/
+* -----  application.properties # Configuración DB y API Keys
+* ----- db/migration # Scripts Flyway para inicializar tablas
+* ---- pom.xml
+* ---- README.md
 
 
 ## Uso del Chat

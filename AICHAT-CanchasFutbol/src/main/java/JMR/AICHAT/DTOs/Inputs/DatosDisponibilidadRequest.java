@@ -1,8 +1,8 @@
-package JMR.AICHAT.RESERVAS;
+package JMR.AICHAT.DTOs.Inputs;
 
 import java.time.LocalDate;
 
-public record DatosDisponibilidad(
+public record DatosDisponibilidadRequest(
         LocalDate fecha,
         Long canchaId
 ) {

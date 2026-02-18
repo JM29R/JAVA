@@ -1,8 +1,9 @@
-package JMR.AICHAT.CONTROLLER;
+package JMR.AICHAT.Controller;
 
 
-import JMR.AICHAT.InteligenciaArtificial.MensajeRequest;
-import JMR.AICHAT.SERVICE.GroqService;
+import JMR.AICHAT.DTOs.DatosFinalAI;
+import JMR.AICHAT.DTOs.Inputs.MensajeRequest;
+import JMR.AICHAT.Service.GroqService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,13 +19,11 @@ public class AIController {
 
     @PostMapping("/chat")
     public ResponseEntity<String> reservarConAI(@RequestBody MensajeRequest request) {
-        String Intencion = groqService.InterpretarIntencion(request);;
+        DatosFinalAI datos = groqService.InterpretarIntencion(request);;
 
-        System.out.println("[" + Intencion + "]");
-        System.out.println(Intencion.length());
-        switch (Intencion) {
+        switch (datos.intencion()) {
             case "CREAR":
-                String respuesta = groqService.CrearReserva(request);
+                String respuesta = groqService.CrearReserva(datos);
                 return ResponseEntity.ok(respuesta);
             case "CANCELAR":
                 String respuesta2 = groqService.CancelarReserva(request);
@@ -33,10 +32,13 @@ public class AIController {
                 String respuesta3 = groqService.ModificarReserva(request);
                 return ResponseEntity.ok(respuesta3);
             case "CONSULTAR":
-                String respuesta4 = groqService.ConsultarReserva(request);
+                String respuesta4 = groqService.ConsultarReserva(datos);
                 return ResponseEntity.ok(respuesta4);
+            case "DISPONIBILIDAD":
+                String respuesta5 = groqService.HorariosLibres(datos);
+                return ResponseEntity.ok(respuesta5);
             default:
-                String respuesta5 = """
+                String respuesta6 = """
                         No se capto la consulta, podrias ser mas especifico?
                         Utiliza:
                         Cancha:
@@ -44,7 +46,7 @@ public class AIController {
                         Fecha:
                         Intencion:(reservar, cancelar, consultar, modificar)
                         """;
-                return ResponseEntity.ok(respuesta5);
+                return ResponseEntity.ok(respuesta6);
 
 
         }

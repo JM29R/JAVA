@@ -1,8 +1,7 @@
-package JMR.AICHAT.RESERVAS;
+package JMR.AICHAT.Reserva;
 
 
-import JMR.AICHAT.CANCHAS.Cancha;
-import JMR.AICHAT.CANCHAS.CanchaRepository;
+import JMR.AICHAT.Cancha.Cancha;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -1,7 +1,7 @@
-package JMR.AICHAT.RESERVAS;
+package JMR.AICHAT.Reserva;
 
 
-import JMR.AICHAT.CANCHAS.Cancha;
+import JMR.AICHAT.Cancha.Cancha;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.LocalDate;

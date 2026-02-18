@@ -1,14 +1,15 @@
-package JMR.AICHAT.SERVICE;
+package JMR.AICHAT.Service;
 
 
-import JMR.AICHAT.CANCHAS.Cancha;
-import JMR.AICHAT.CANCHAS.CanchaRepository;
-import JMR.AICHAT.RESERVAS.*;
-import jakarta.validation.Valid;
+import JMR.AICHAT.Cancha.Cancha;
+import JMR.AICHAT.Cancha.CanchaRepository;
+import JMR.AICHAT.DTOs.Inputs.DatosDisponibilidadRequest;
+import JMR.AICHAT.DTOs.Inputs.DatosIdentificarReservaRequest;
+import JMR.AICHAT.DTOs.Inputs.DatosModificarReservaRequest;
+import JMR.AICHAT.DTOs.Inputs.DatosReservaRequest;
+import JMR.AICHAT.Reserva.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -24,7 +25,7 @@ public class ReservaService {
     @Autowired
     private ReservaRepository reservaRepository;
 
-    public Reserva reservarCancha(DatosReserva datos){
+    public Reserva reservarCancha(DatosReservaRequest datos){
         if (datos.canchaId() == null) {
             throw new RuntimeException("el numero de la cancha es obligatorio para reservar");
         }
@@ -51,7 +52,7 @@ public class ReservaService {
         return reserva;
     }
 
-    public Reserva modificarReserva(DatosModificarReserva datos) {
+    public Reserva modificarReserva(DatosModificarReservaRequest datos) {
 
         Reserva reserva = reservaRepository
                 .findByTelefonoAndFechaAndHora(
@@ -63,7 +64,7 @@ public class ReservaService {
 
         Cancha cancha = canchaRepository
                 .findById(datos.canchaId())
-                .orElseThrow(() -> new RuntimeException("no se encontro reserva en esa ID"));
+                .orElseThrow(() -> new RuntimeException("no se encontro cancha en esa ID"));
 
         boolean ocupada = reservaRepository
                 .existsByCanchaAndFechaAndHora(
@@ -83,7 +84,7 @@ public class ReservaService {
         return reservaRepository.save(reserva);
     }
 
-    public void EliminarReserva(DatosIdentificarReserva datos) {
+    public void EliminarReserva(DatosIdentificarReservaRequest datos) {
         Reserva reserva = reservaRepository
                 .findByTelefonoAndFechaAndHora(
                         datos.telefono(),
@@ -95,7 +96,7 @@ public class ReservaService {
         reservaRepository.delete(reserva);
     }
 
-    public List<LocalTime> obtenerHorariosDisponibles(DatosDisponibilidad datos) {
+    public List<LocalTime> obtenerHorariosDisponibles(DatosDisponibilidadRequest datos) {
 
         Cancha cancha = canchaRepository
                 .findById(datos.canchaId())

@@ -1,8 +1,6 @@
-package JMR.AICHAT.CANCHAS;
+package JMR.AICHAT.Cancha;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-
-import java.util.List;
 
 public interface CanchaRepository extends JpaRepository<Cancha, Long> {
 

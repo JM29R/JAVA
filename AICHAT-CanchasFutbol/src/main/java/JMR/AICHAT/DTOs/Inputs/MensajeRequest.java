@@ -1,4 +1,4 @@
-package JMR.AICHAT.InteligenciaArtificial;
+package JMR.AICHAT.DTOs.Inputs;
 
 public record MensajeRequest(
         String mensaje,

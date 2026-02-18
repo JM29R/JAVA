@@ -1,10 +1,11 @@
-package JMR.AICHAT.CONTROLLER;
+package JMR.AICHAT.Controller;
 
 
-import JMR.AICHAT.CANCHAS.Cancha;
-import JMR.AICHAT.CANCHAS.CanchaRepository;
-import JMR.AICHAT.CANCHAS.DatosCancha;
-import JMR.AICHAT.SERVICE.CanchaService;
+import JMR.AICHAT.Cancha.Cancha;
+import JMR.AICHAT.Cancha.CanchaRepository;
+import JMR.AICHAT.DTOs.Inputs.DatosCanchaRequest;
+import JMR.AICHAT.Mapper.CanchaMapper;
+import JMR.AICHAT.Service.CanchaService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,16 +26,16 @@ public class CanchaController {
 
     @Transactional
     @PostMapping
-    public ResponseEntity Crear(@Valid @RequestBody DatosCancha datos){
+    public ResponseEntity Crear(@Valid @RequestBody DatosCanchaRequest datos){
         Cancha cancha = canchaService.crearCancha(datos);
-        return ResponseEntity.status(HttpStatus.CREATED).body(cancha);
+        return ResponseEntity.status(HttpStatus.CREATED).body(CanchaMapper.toDTO(cancha));
     }
 
     @Transactional
     @PutMapping("/{id}")
-    public ResponseEntity Actualizar(@PathVariable Long id, @Valid @RequestBody DatosCancha datos){
+    public ResponseEntity Actualizar(@PathVariable Long id, @Valid @RequestBody DatosCanchaRequest datos){
         Cancha cancha = canchaService.actualizarCancha(id, datos);
-        return ResponseEntity.ok(cancha);
+        return ResponseEntity.ok(CanchaMapper.toDTO(cancha));
 
 
     }

@@ -1,9 +1,9 @@
-package JMR.AICHAT.RESERVAS;
+package JMR.AICHAT.DTOs.Inputs;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-public record DatosModificarReserva(
+public record DatosModificarReservaRequest(
        //fechas viejas
         String telefono,
         LocalDate fechaActual,

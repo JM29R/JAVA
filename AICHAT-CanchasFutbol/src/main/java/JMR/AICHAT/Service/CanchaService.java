@@ -1,14 +1,12 @@
-package JMR.AICHAT.SERVICE;
+package JMR.AICHAT.Service;
 
-import JMR.AICHAT.CANCHAS.Cancha;
-import JMR.AICHAT.CANCHAS.CanchaRepository;
-import JMR.AICHAT.CANCHAS.DatosCancha;
+import JMR.AICHAT.Cancha.Cancha;
+import JMR.AICHAT.Cancha.CanchaRepository;
+import JMR.AICHAT.DTOs.Inputs.DatosCanchaRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 
 @Service
@@ -17,7 +15,7 @@ public class CanchaService {
     @Autowired
     private CanchaRepository canchaRepository;
 
-    public Cancha crearCancha(DatosCancha datos) {
+    public Cancha crearCancha(DatosCanchaRequest datos) {
         Cancha cancha = new Cancha();
         cancha.setNombre(datos.nombre());
         cancha.setTipo(datos.tipo());
@@ -25,7 +23,7 @@ public class CanchaService {
         return canchaRepository.save(cancha);
     }
 
-    public Cancha actualizarCancha(Long id, DatosCancha datos) {
+    public Cancha actualizarCancha(Long id, DatosCanchaRequest datos) {
         Cancha cancha = canchaRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Cancha no encontrada"));
 

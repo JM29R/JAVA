@@ -5,6 +5,7 @@ import JMR.AICHAT.Cancha.Cancha;
 import JMR.AICHAT.Cancha.CanchaRepository;
 import JMR.AICHAT.DTOs.*;
 import JMR.AICHAT.DTOs.Inputs.*;
+import JMR.AICHAT.Mensaje.Mensaje;
 import JMR.AICHAT.Reserva.*;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,20 @@ public class GroqService {
 
     public GroqService(ChatClient.Builder chatClientBuilder) {
         this.chatClient = chatClientBuilder.build();
+    }
+
+    private String formatearHistorial(List<Mensaje> historial) {
+        if (historial == null || historial.isEmpty()) {
+            return "No hay historial previo.";
+        }
+
+        StringBuilder sb = new StringBuilder();
+        for (int i = historial.size() - 1; i >= 0; i--) {
+            Mensaje msg = historial.get(i);
+            sb.append("Usuario: ").append(msg.getMensajeUsuario()).append("\n");
+            sb.append("Asistente: ").append(msg.getRespuestaSistema()).append("\n\n");
+        }
+        return sb.toString();
     }
 
     private String limpiarIntencion(String raw) {
@@ -99,63 +114,103 @@ Generá solo el mensaje para el cliente.
         return respuesta.trim().toLowerCase();
     }
 
-    public DatosFinalAI AnalizarMensaje(MensajeRequest mensajeRequest) {
+    public DatosFinalAI AnalizarMensaje(MensajeRequest mensajeRequest, List<Mensaje> historial) {
+
+        String HistorialMsj = formatearHistorial(historial);
+        LocalDate hoy = LocalDate.now();
 
         String prompt = """
-                Sos un analizador de mensajes para un sistema de reservas de canchas de fútbol.
+        Sos un analizador de mensajes para un sistema de reservas de canchas de fútbol.
                 
-                IMPORTANTE: Debés responder SOLO con un JSON válido, sin texto adicional, sin explicaciones, sin markdown.
-                Tu tarea:
-                Analizar el mensaje del usuario y devolver UNICAMENTE un objeto JSON con:
-                        - intencion (string)
-                        - fecha (string o null)
-                        - hora (string o null) 
-                        - canchaId (number o null)
+                    FECHA ACTUAL DEL SISTEMA: %s
                 
-                Intenciones posibles (solo una, en MAYÚSCULAS):
-                    CREAR
-                    CANCELAR 
-                    MODIFICAR
-                    CONSULTAR
-                    DISPONIBILIDAD
+                    CONTEXTO DE LA CONVERSACIÓN:
+                    %s
                 
-                    Reglas para la intención:
-                        - Si pregunta por horarios o disponibilidad → DISPONIBILIDAD
-                        - Si quiere reservar o sacar turno:
-                        - Si menciona cancha específica → CREAR
-                        - Si NO menciona cancha → DISPOBIBILIDAD
-                        - Si quiere cambiar fecha u hora → MODIFICAR
-                        - Si quiere cancelar una reserva → CANCELAR
-                        - Si pregunta qué reserva tiene → CONSULTAR
+                    MENSAJE ACTUAL DEL USUARIO:
+                    "%s"
                 
-                    Reglas de fecha:
-                        "hoy" → fecha de HOY en formato YYYY-MM-DD
-                        
-                        
-                        - "mañana" → fecha de MAÑANA en formato YYYY-MM-DD
-                        - Día de la semana (ej: "lunes") → próxima fecha de ese día
-                        - Si no menciona fecha → null
+                    TAREA:
+                    Analizar el mensaje actual teniendo en cuenta el contexto SOLO si el usuario hace referencia explícita a algo anterior.
                 
-                        Reglas de hora:
-                        - Si dice "9" o "9 hs" → "09:00"
-                        - Formato siempre HH:mm
-                        - Si no menciona hora → null
+                    RESPONDÉ ÚNICAMENTE con un JSON válido (sin texto, sin explicaciones, sin markdown).
                 
-                        Reglas de cancha:
-                        - Si menciona número de cancha (ej: "cancha 3", "cancha 5") → usar ese número
-                        - Si NO menciona cancha → null
-                        - NUNCA asumir una cancha por defecto
+                    FORMATO EXACTO:
+                    {
+                      "intencion": "CREAR | CANCELAR | MODIFICAR | CONSULTAR | DISPONIBILIDAD",
+                      "fecha": "YYYY-MM-DD o null",
+                      "hora": "HH:mm o null",
+                      "canchaId": number o null
+                    }
                 
-                        Mensaje del usuario: """ + mensajeRequest.mensaje() + """
+                    INTENCIONES POSIBLES (solo una):
+                    - CREAR → quiere reservar una cancha específica
+                    - DISPONIBILIDAD → pregunta horarios o quiere reservar sin indicar cancha
+                    - MODIFICAR → quiere cambiar fecha, hora o cancha
+                    - CANCELAR → quiere cancelar una reserva
+                    - CONSULTAR → pregunta qué reservas tiene o información general
                 
-                        JSON requerido (sin texto adicional, solo el JSON):
-                            {
-                                "intencion": "DISPONIBILIDAD",
-                                "fecha": "2024-01-20",
-                                "hora": "15:30",
-                                "canchaId": 3
-                            }
-                                   """;
+                    REGLAS DE INTENCIÓN:
+                    - Si pregunta por horarios o disponibilidad → DISPONIBILIDAD
+                    - Si quiere reservar:
+                        - Si menciona cancha → CREAR
+                        - Si NO menciona cancha → DISPONIBILIDAD
+                    - Si quiere cambiar algo existente → MODIFICAR
+                    - Si quiere cancelar → CANCELAR
+                    - Si pregunta por sus reservas → CONSULTAR
+                
+                    REGLAS DE FECHA:
+                    - "hoy" → usar la fecha actual del sistema
+                    - "mañana" → fecha actual + 1 día
+                    - Día de la semana → próxima fecha de ese día
+                    - Si el mensaje actual hace referencia explícita a una fecha anterior (ej: "la misma fecha") → usar la del historial
+                    - Si no hay fecha clara → null
+                    - Formato obligatorio: YYYY-MM-DD
+                    - No usar texto como "hoy" o nombres de meses en la respuesta
+                
+                    REGLAS DE HORA:
+                    - "9", "9 hs", "9h" → 09:00
+                    - "9:30" → 09:30
+                    - Si el mensaje dice "la misma hora" → usar la del historial
+                    - Si no menciona hora → null
+                    - Formato obligatorio: HH:mm
+                
+                    REGLAS DE CANCHA:
+                    - "cancha 3" → 3
+                    - "la misma cancha" → usar la del historial
+                    - Si no menciona cancha → null
+                    - Nunca asumir una cancha por defecto
+                
+                    USO DEL HISTORIAL:
+                    - Usar datos del historial SOLO si el mensaje actual lo referencia explícitamente:
+                      Ejemplos:
+                      "la misma"
+                      "esa"
+                      "cambiame el turno"
+                      "la misma hora"
+                    - Si no hay referencia explícita → no usar el historial
+                
+                    REGLA CRÍTICA (ANTI-ALUCINACIÓN):
+                    - NO inventes información
+                    - Si un dato no aparece en el mensaje actual ni en el historial → null
+                    - Nunca supongas fecha, hora o cancha
+                
+                    VALIDACIÓN FINAL:
+                    - Respondé solo el JSON
+                    - No agregues texto antes ni después
+                    - No agregues campos extra
+                    - Verificá que el JSON sea válido
+                
+                    EJEMPLOS DE RESPUESTA:
+                
+                    {"intencion":"CREAR","fecha":"2026-02-20","hora":"18:00","canchaId":2}
+                    {"intencion":"DISPONIBILIDAD","fecha":"2026-02-21","hora":null,"canchaId":null}
+                    {"intencion":"CONSULTAR","fecha":null,"hora":null,"canchaId":null}
+                
+                    RESPUESTA:
+                    """.formatted(hoy, HistorialMsj, mensajeRequest.mensaje());
+
+
         AnalisisAI respuesta = chatClient.prompt()
                 .user(prompt)
                 .call()

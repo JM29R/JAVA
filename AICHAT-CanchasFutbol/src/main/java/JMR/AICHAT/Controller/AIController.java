@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/ai")
+@RequestMapping("/chat")
 public class AIController {
 
 
@@ -17,9 +17,11 @@ public class AIController {
     @Autowired
     private GroqService groqService;
 
-    @PostMapping("/chat")
+    @PostMapping
     public ResponseEntity<String> reservarConAI(@RequestBody MensajeRequest request) {
-        DatosFinalAI datos = groqService.InterpretarIntencion(request);;
+        DatosFinalAI datos = groqService.AnalizarMensaje(request);
+        System.out.println("Intecion desde AIController: "+ datos.intencion());
+        System.out.println("fecha: " + datos.fecha());
 
         switch (datos.intencion()) {
             case "CREAR":

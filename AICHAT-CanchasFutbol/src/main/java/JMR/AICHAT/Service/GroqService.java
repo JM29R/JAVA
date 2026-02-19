@@ -99,105 +99,92 @@ Generá solo el mensaje para el cliente.
         return respuesta.trim().toLowerCase();
     }
 
-    public DatosFinalAI InterpretarIntencion(MensajeRequest mensajeRequest) {
+    public DatosFinalAI AnalizarMensaje(MensajeRequest mensajeRequest) {
+
         String prompt = """
                 Sos un analizador de mensajes para un sistema de reservas de canchas de fútbol.
                 
+                IMPORTANTE: Debés responder SOLO con un JSON válido, sin texto adicional, sin explicaciones, sin markdown.
                 Tu tarea:
-                Analizar el mensaje del usuario y devolver SOLO un JSON válido con:
-                - intencion
-                - fecha
-                - hora
-                - canchaId
+                Analizar el mensaje del usuario y devolver UNICAMENTE un objeto JSON con:
+                        - intencion (string)
+                        - fecha (string o null)
+                        - hora (string o null) 
+                        - canchaId (number o null)
                 
-                El sistema ya maneja el nombre y teléfono del cliente. No los incluyas.
+                Intenciones posibles (solo una, en MAYÚSCULAS):
+                    CREAR
+                    CANCELAR 
+                    MODIFICAR
+                    CONSULTAR
+                    DISPONIBILIDAD
                 
-                Intenciones posibles (solo una):
-                CREAR
-                CANCELAR
-                MODIFICAR
-                CONSULTAR
-                DISPONIBILIDAD
+                    Reglas para la intención:
+                        - Si pregunta por horarios o disponibilidad → DISPONIBILIDAD
+                        - Si quiere reservar o sacar turno:
+                        - Si menciona cancha específica → CREAR
+                        - Si NO menciona cancha → DISPOBIBILIDAD
+                        - Si quiere cambiar fecha u hora → MODIFICAR
+                        - Si quiere cancelar una reserva → CANCELAR
+                        - Si pregunta qué reserva tiene → CONSULTAR
                 
-                Reglas para la intención:
+                    Reglas de fecha:
+                        "hoy" → fecha de HOY en formato YYYY-MM-DD
+                        
+                        
+                        - "mañana" → fecha de MAÑANA en formato YYYY-MM-DD
+                        - Día de la semana (ej: "lunes") → próxima fecha de ese día
+                        - Si no menciona fecha → null
                 
-                - Si pregunta por horarios o disponibilidad → DISPONIBILIDAD
-                - Si quiere reservar o sacar turno:
-                    - Si menciona cancha → CREAR
-                    - Si NO menciona cancha → DISPONIBILIDAD
-                - Si quiere cambiar fecha u hora → MODIFICAR
-                - Si quiere cancelar una reserva → CANCELAR
-                - Si pregunta qué reserva tiene → CONSULTAR
+                        Reglas de hora:
+                        - Si dice "9" o "9 hs" → "09:00"
+                        - Formato siempre HH:mm
+                        - Si no menciona hora → null
                 
-                Reglas de fecha:
+                        Reglas de cancha:
+                        - Si menciona número de cancha (ej: "cancha 3", "cancha 5") → usar ese número
+                        - Si NO menciona cancha → null
+                        - NUNCA asumir una cancha por defecto
                 
-                - "hoy" → fecha de hoy
-                - "mañana" → fecha de mañana
-                - Día de la semana → próxima fecha de ese día
-                - Formato: YYYY-MM-DD
-                - Si no menciona fecha → null
+                        Mensaje del usuario: """ + mensajeRequest.mensaje() + """
                 
-                Reglas de hora:
-                
-                - Si dice "9" → 09:00
-                - Formato: HH:mm
-                - Si no menciona hora → null
-                
-                Reglas de cancha:
-                
-                - Si menciona número de cancha → usar ese número
-                - Si NO menciona cancha → null
-                - Nunca asumir una cancha por defecto
-                
-                IMPORTANTE:
-                
-                - Respondé SOLO JSON
-                - No agregues texto ni explicaciones
-                - No agregues campos extra
-                - No uses listas ni corchetes []
-                - Si un dato no está → null
-                - No inventes información
-                
-                Formato exacto:
-                
-                {
-                  "intencion": "DISPONIBILIDAD",
-                  "fecha": "YYYY-MM-DD",
-                  "hora": "HH:mm",
-                  "canchaId": number
-                }
-                
-                Mensaje del usuario:
-                
-                """ + mensajeRequest.mensaje();
+                        JSON requerido (sin texto adicional, solo el JSON):
+                            {
+                                "intencion": "DISPONIBILIDAD",
+                                "fecha": "2024-01-20",
+                                "hora": "15:30",
+                                "canchaId": 3
+                            }
+                                   """;
         AnalisisAI respuesta = chatClient.prompt()
                 .user(prompt)
                 .call()
                 .entity(AnalisisAI.class);
         LocalDate fecha = null;
         LocalTime hora = null;
+        //validar fecha
         if (respuesta.fecha() != null && !respuesta.fecha().isBlank()) {
             try {
                 fecha = LocalDate.parse(respuesta.fecha());
             } catch (Exception e) {
-                fecha = null;
+                System.err.println("Error parseando fecha: " + respuesta.fecha());
             }
         }
+        //validar hora
         if (respuesta.hora() != null && !respuesta.hora().isBlank()) {
             try {
                 hora = LocalTime.parse(respuesta.hora());
             } catch (Exception e) {
-                hora = null;
+                System.err.println("Error parseando hora: " + respuesta.hora());
             }
         }
+        //limpiar intencion
         String intencion = limpiarIntencion(respuesta.intencion());
         Integer canchaId = respuesta.canchaId() != null ? respuesta.canchaId() : -1;
-
+        //validar si la cancha es -1 es porque no puso cancha y consulta
         if ("CREAR".equals(intencion) && canchaId == -1) {
             intencion = "DISPONIBILIDAD";
         }
-
-
 
         DatosFinalAI datos = new DatosFinalAI(
                 intencion,
@@ -210,6 +197,7 @@ Generá solo el mensaje para el cliente.
 
         return datos;
     }
+
         public String CrearReserva(DatosFinalAI mensajeRequest) {
             Long canchaIdLong = mensajeRequest.canchaId().longValue();
             try {

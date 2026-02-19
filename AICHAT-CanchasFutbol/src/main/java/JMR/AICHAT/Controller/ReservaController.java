@@ -26,7 +26,10 @@ public class ReservaController {
 
     @Autowired
     private ReservaService reservaService;
+    @Autowired
     private CanchaRepository canchaRepository;
+    @Autowired
+    private ReservaRepository reservaRepository;
 
     @Transactional
     @PostMapping
@@ -35,6 +38,7 @@ public class ReservaController {
         Cancha cancha = canchaRepository.findById(datos.canchaId())
                 .orElseThrow(() -> new RuntimeException("Cancha no encontrada"));
         Reserva reserva = ReservaMapper.toEntity(datos,cancha);
+        reservaRepository.save(reserva);
         return  ResponseEntity.ok(ReservaMapper.toResponse(reserva));
 
     }

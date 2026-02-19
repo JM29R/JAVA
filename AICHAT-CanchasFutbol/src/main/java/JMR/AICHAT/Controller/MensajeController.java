@@ -40,6 +40,15 @@ public class MensajeController {
         return ResponseEntity.ok(respuesta);
     }
 
+    @GetMapping("/intencion")
+    public ResponseEntity<List<MensajeResponse>>  ObtenerTodosPorIntencion(@PathVariable String intencion){
+        List<Mensaje> mensajes = mensajeRepository.findByIntencion(intencion);
+        List<MensajeResponse> respuesta= mensajes.stream()
+                .map(MensajeMapper::toDTO)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(respuesta);
+    }
+
     @Transactional
     @DeleteMapping("/{id}")
     public ResponseEntity eliminarMensaje(@PathVariable Long id){

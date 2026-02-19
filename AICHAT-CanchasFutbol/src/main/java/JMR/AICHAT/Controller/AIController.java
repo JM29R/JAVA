@@ -2,7 +2,6 @@ package JMR.AICHAT.Controller;
 
 
 import JMR.AICHAT.DTOs.DatosFinalAI;
-import JMR.AICHAT.DTOs.DatosMensaje;
 import JMR.AICHAT.DTOs.Inputs.MensajeRequest;
 import JMR.AICHAT.Mapper.MensajeMapper;
 import JMR.AICHAT.Mensaje.Mensaje;
@@ -11,8 +10,6 @@ import JMR.AICHAT.Service.GroqService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController

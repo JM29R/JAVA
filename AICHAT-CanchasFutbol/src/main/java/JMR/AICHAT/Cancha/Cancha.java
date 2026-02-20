@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @AllArgsConstructor
@@ -27,8 +28,10 @@ public class Cancha {
     private Integer tipo;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "cancha")
-    private List<Reserva> reservas;
+    @OneToMany( mappedBy = "cancha",
+                cascade = CascadeType.REMOVE,
+                orphanRemoval = true)
+    private List<Reserva> reservas = new ArrayList<>();
 
 
 

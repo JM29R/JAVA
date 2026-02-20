@@ -28,8 +28,8 @@ public class Reserva {
     private String nombreCliente;
     private String telefono;
 
-    @ManyToOne
-    @JoinColumn(name = "cancha_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "cancha_id", nullable = false)
     private Cancha cancha;
 
 }

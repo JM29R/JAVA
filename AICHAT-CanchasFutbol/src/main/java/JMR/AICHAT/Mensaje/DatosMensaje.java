@@ -1,4 +1,4 @@
-package JMR.AICHAT.DTOs;
+package JMR.AICHAT.Mensaje;
 
 import java.time.LocalDateTime;
 

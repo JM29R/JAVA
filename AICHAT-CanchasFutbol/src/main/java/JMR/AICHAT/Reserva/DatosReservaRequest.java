@@ -1,14 +1,13 @@
-package JMR.AICHAT.DTOs;
+package JMR.AICHAT.Reserva;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-public record DatosFinalAI(
-        String intencion,
+public record DatosReservaRequest(
         LocalDate fecha,
         LocalTime hora,
-        Integer canchaId,
-        String nombre,
+        Long canchaId,
+        String nombreCliente,
         String telefono
 
 ) {

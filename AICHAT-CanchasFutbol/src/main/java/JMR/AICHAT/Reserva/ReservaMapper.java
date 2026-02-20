@@ -1,9 +1,6 @@
-package JMR.AICHAT.Mapper;
+package JMR.AICHAT.Reserva;
 
 import JMR.AICHAT.Cancha.Cancha;
-import JMR.AICHAT.DTOs.Inputs.DatosReservaRequest;
-import JMR.AICHAT.DTOs.Outputs.ReservaResponse;
-import JMR.AICHAT.Reserva.Reserva;
 
 public class ReservaMapper {
 

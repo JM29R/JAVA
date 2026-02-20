@@ -1,4 +1,4 @@
-package JMR.AICHAT.DTOs;
+package JMR.AICHAT.ChatAI;
 
 public record AnalisisAI(
         String intencion,

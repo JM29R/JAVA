@@ -1,9 +1,9 @@
 package JMR.AICHAT.Controller;
 
 
-import JMR.AICHAT.DTOs.DatosFinalAI;
-import JMR.AICHAT.DTOs.Inputs.MensajeRequest;
-import JMR.AICHAT.Mapper.MensajeMapper;
+import JMR.AICHAT.ChatAI.DatosFinalAI;
+import JMR.AICHAT.Mensaje.MensajeRequest;
+import JMR.AICHAT.Mensaje.MensajeMapper;
 import JMR.AICHAT.Mensaje.Mensaje;
 import JMR.AICHAT.Mensaje.MensajeRepository;
 import JMR.AICHAT.Service.GroqService;

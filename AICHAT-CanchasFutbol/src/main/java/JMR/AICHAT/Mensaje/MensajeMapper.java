@@ -1,9 +1,6 @@
-package JMR.AICHAT.Mapper;
+package JMR.AICHAT.Mensaje;
 
-import JMR.AICHAT.DTOs.DatosFinalAI;
-import JMR.AICHAT.DTOs.DatosMensaje;
-import JMR.AICHAT.DTOs.Outputs.MensajeResponse;
-import JMR.AICHAT.Mensaje.Mensaje;
+import JMR.AICHAT.ChatAI.DatosFinalAI;
 
 import java.time.LocalDateTime;
 

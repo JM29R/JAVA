@@ -2,7 +2,7 @@ package JMR.AICHAT.Service;
 
 import JMR.AICHAT.Cancha.Cancha;
 import JMR.AICHAT.Cancha.CanchaRepository;
-import JMR.AICHAT.DTOs.Inputs.DatosCanchaRequest;
+import JMR.AICHAT.Cancha.DatosCanchaRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 

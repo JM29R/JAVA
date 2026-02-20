@@ -3,9 +3,11 @@ package JMR.AICHAT.Service;
 
 import JMR.AICHAT.Cancha.Cancha;
 import JMR.AICHAT.Cancha.CanchaRepository;
-import JMR.AICHAT.DTOs.*;
-import JMR.AICHAT.DTOs.Inputs.*;
+import JMR.AICHAT.ChatAI.AnalisisAI;
+import JMR.AICHAT.ChatAI.DatosFinalAI;
+import JMR.AICHAT.ChatAI.DatosModificarAI;
 import JMR.AICHAT.Mensaje.Mensaje;
+import JMR.AICHAT.Mensaje.MensajeRequest;
 import JMR.AICHAT.Reserva.*;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,8 +1,4 @@
-package JMR.AICHAT.Mapper;
-
-import JMR.AICHAT.Cancha.Cancha;
-import JMR.AICHAT.DTOs.Inputs.DatosCanchaRequest;
-import JMR.AICHAT.DTOs.Outputs.CanchaResponse;
+package JMR.AICHAT.Cancha;
 
 public class CanchaMapper {
 

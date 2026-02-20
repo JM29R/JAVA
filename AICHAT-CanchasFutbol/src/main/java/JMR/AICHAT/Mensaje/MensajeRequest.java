@@ -1,4 +1,4 @@
-package JMR.AICHAT.DTOs.Inputs;
+package JMR.AICHAT.Mensaje;
 
 public record MensajeRequest(
         String mensaje,

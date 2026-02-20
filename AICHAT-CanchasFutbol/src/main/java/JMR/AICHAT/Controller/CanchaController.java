@@ -3,8 +3,8 @@ package JMR.AICHAT.Controller;
 
 import JMR.AICHAT.Cancha.Cancha;
 import JMR.AICHAT.Cancha.CanchaRepository;
-import JMR.AICHAT.DTOs.Inputs.DatosCanchaRequest;
-import JMR.AICHAT.Mapper.CanchaMapper;
+import JMR.AICHAT.Cancha.DatosCanchaRequest;
+import JMR.AICHAT.Cancha.CanchaMapper;
 import JMR.AICHAT.Service.CanchaService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,7 +45,7 @@ public class CanchaController {
     @DeleteMapping("/{id}")
     public ResponseEntity EliminarCancha(@PathVariable Long id){
         canchaRepository.deleteById(id);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 
 

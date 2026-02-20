@@ -1,4 +1,4 @@
-package JMR.AICHAT.DTOs;
+package JMR.AICHAT.ChatAI;
 
 public record DatosModificarAI(
         Long canchaId,

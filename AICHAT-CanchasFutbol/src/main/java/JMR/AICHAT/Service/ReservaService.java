@@ -3,10 +3,10 @@ package JMR.AICHAT.Service;
 
 import JMR.AICHAT.Cancha.Cancha;
 import JMR.AICHAT.Cancha.CanchaRepository;
-import JMR.AICHAT.DTOs.Inputs.DatosDisponibilidadRequest;
-import JMR.AICHAT.DTOs.Inputs.DatosIdentificarReservaRequest;
-import JMR.AICHAT.DTOs.Inputs.DatosModificarReservaRequest;
-import JMR.AICHAT.DTOs.Inputs.DatosReservaRequest;
+import JMR.AICHAT.Reserva.DatosDisponibilidadRequest;
+import JMR.AICHAT.Reserva.DatosIdentificarReservaRequest;
+import JMR.AICHAT.Reserva.DatosModificarReservaRequest;
+import JMR.AICHAT.Reserva.DatosReservaRequest;
 import JMR.AICHAT.Reserva.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

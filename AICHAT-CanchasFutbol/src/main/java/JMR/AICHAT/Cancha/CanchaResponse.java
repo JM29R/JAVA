@@ -1,4 +1,4 @@
-package JMR.AICHAT.DTOs.Outputs;
+package JMR.AICHAT.Cancha;
 
 public record CanchaResponse(
         Long id,

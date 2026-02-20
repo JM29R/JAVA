@@ -1,4 +1,4 @@
-package JMR.AICHAT.DTOs.Inputs;
+package JMR.AICHAT.Reserva;
 
 import java.time.LocalDate;
 

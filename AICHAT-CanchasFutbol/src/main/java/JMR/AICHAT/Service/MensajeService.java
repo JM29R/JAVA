@@ -1,8 +1,6 @@
 package JMR.AICHAT.Service;
 
-import JMR.AICHAT.DTOs.DatosFinalAI;
-import JMR.AICHAT.DTOs.DatosMensaje;
-import JMR.AICHAT.DTOs.Inputs.MensajeRequest;
+import JMR.AICHAT.Mensaje.DatosMensaje;
 import JMR.AICHAT.Mensaje.Mensaje;
 import JMR.AICHAT.Mensaje.MensajeRepository;
 import org.springframework.beans.factory.annotation.Autowired;

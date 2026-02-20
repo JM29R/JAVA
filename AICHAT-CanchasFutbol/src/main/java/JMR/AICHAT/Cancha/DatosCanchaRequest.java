@@ -1,4 +1,4 @@
-package JMR.AICHAT.DTOs.Inputs;
+package JMR.AICHAT.Cancha;
 
 public record DatosCanchaRequest(
         String nombre,

@@ -1,14 +1,15 @@
-package JMR.AICHAT.DTOs.Inputs;
+package JMR.AICHAT.Reserva;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-public record DatosReservaRequest(
+public record ReservaResponse(
+        Long id,
         LocalDate fecha,
         LocalTime hora,
-        Long canchaId,
         String nombreCliente,
-        String telefono
+        String telefono,
+        Long canchaId
 
 ) {
 }

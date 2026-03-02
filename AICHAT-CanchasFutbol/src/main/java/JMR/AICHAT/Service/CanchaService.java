@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 
 @Service
 public class CanchaService {
@@ -31,6 +33,10 @@ public class CanchaService {
         cancha.setTipo(datos.tipo());
 
         return canchaRepository.save(cancha);
+    }
+
+    public List<Cancha> listarCanchas() {
+        return canchaRepository.findAll();
     }
 
 

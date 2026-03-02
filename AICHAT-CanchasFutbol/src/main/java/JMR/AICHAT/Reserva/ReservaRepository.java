@@ -26,4 +26,11 @@ public interface ReservaRepository extends JpaRepository<Reserva, Long> {
     List<Reserva> findByCanchaAndFecha(Cancha cancha, LocalDate fecha);
 
     Reserva findByTelefonoAndNombreCliente(String telefono, String nombre);
+
+    boolean existsByCanchaAndFechaAndHoraAndIdNot(
+            Cancha cancha,
+            LocalDate fecha,
+            LocalTime hora,
+            Long id
+    );
 }

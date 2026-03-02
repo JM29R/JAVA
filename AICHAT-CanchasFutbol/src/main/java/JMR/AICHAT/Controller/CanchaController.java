@@ -1,10 +1,10 @@
 package JMR.AICHAT.Controller;
 
 
-import JMR.AICHAT.Cancha.Cancha;
-import JMR.AICHAT.Cancha.CanchaRepository;
-import JMR.AICHAT.Cancha.DatosCanchaRequest;
-import JMR.AICHAT.Cancha.CanchaMapper;
+import JMR.AICHAT.Cancha.*;
+import JMR.AICHAT.Reserva.Reserva;
+import JMR.AICHAT.Reserva.ReservaMapper;
+import JMR.AICHAT.Reserva.ReservaResponse;
 import JMR.AICHAT.Service.CanchaService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,8 +13,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @RestController
-@RequestMapping("/cancha")
+@RequestMapping("/API/canchas")
 
 public class CanchaController {
 
@@ -48,6 +51,16 @@ public class CanchaController {
         return ResponseEntity.noContent().build();
     }
 
+    @GetMapping("/todas")
+    public ResponseEntity listarTodas() {
+        List<Cancha> canchas = canchaRepository.findAll();
+        List<CanchaResponse> respuestas = canchaRepository.findAll()
+                .stream()
+                .map(CanchaMapper::toDTO)
+                .toList();
+        return ResponseEntity.ok(respuestas);
+
+    }
 
 
 

@@ -5,7 +5,7 @@ import JMR.AICHAT.Cancha.Cancha;
 import JMR.AICHAT.Cancha.CanchaRepository;
 import JMR.AICHAT.Reserva.DatosDisponibilidadRequest;
 import JMR.AICHAT.Reserva.DatosIdentificarReservaRequest;
-import JMR.AICHAT.Reserva.DatosModificarReservaRequest;
+import JMR.AICHAT.Reserva.DatosModificarReservaAI;
 import JMR.AICHAT.Reserva.DatosReservaRequest;
 import JMR.AICHAT.Reserva.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ReservaService {
@@ -52,7 +53,7 @@ public class ReservaService {
         return reserva;
     }
 
-    public Reserva modificarReserva(DatosModificarReservaRequest datos) {
+    public Reserva modificarReserva(DatosModificarReservaAI datos) {
 
         Reserva reserva = reservaRepository
                 .findByTelefonoAndFechaAndHora(
@@ -121,6 +122,44 @@ public class ReservaService {
 
         return todosLosHorarios;
     }
+
+    public void eliminarPorId(Long id) {
+        reservaRepository.deleteById(id);
+    }
+
+    public Reserva modificarReservaID(Long id, DatosModificarReservaRequest datos) {
+
+        Reserva reserva = reservaRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("No existe"));
+
+
+        Cancha cancha = canchaRepository
+                .findById(datos.canchaId())
+                .orElseThrow(() -> new RuntimeException("no se encontro cancha en esa ID"));
+
+        boolean ocupada = reservaRepository
+                .existsByCanchaAndFechaAndHoraAndIdNot(
+                        cancha,
+                        datos.fecha(),
+                        datos.hora(),
+                        id
+                );
+        if (ocupada) {
+            throw new RuntimeException("Ese horario ya está ocupado");
+        }
+
+        reserva.setFecha(datos.fecha());
+        reserva.setHora(datos.hora());
+        reserva.setCancha(cancha);
+        reserva.setNombreCliente(datos.nombreCliente());
+        reserva.setTelefono(datos.telefono());
+
+        return reservaRepository.save(reserva);
+
+
+    }
+
+
 
 }
 

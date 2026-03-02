@@ -49,6 +49,24 @@ public class GroqService {
         return sb.toString();
     }
 
+    private List<LocalTime> filtrarHorariosPasados(List<LocalTime> horarios, LocalDate fecha) {
+
+        LocalDate hoy = LocalDate.now();
+        LocalTime ahora = LocalTime.now();
+
+        if (fecha.isBefore(hoy)) {
+            return List.of();
+        }
+
+        if (fecha.isEqual(hoy)) {
+            return horarios.stream()
+                    .filter(hora -> hora.isAfter(ahora))
+                    .toList();
+        }
+
+        return horarios;
+    }
+
     private String limpiarIntencion(String raw) {
         if (raw == null) return "";
         String texto = raw.trim().toUpperCase();
@@ -122,94 +140,80 @@ Generá solo el mensaje para el cliente.
         LocalDate hoy = LocalDate.now();
 
         String prompt = """
-        Sos un analizador de mensajes para un sistema de reservas de canchas de fútbol.
+                Sos un analizador de mensajes para un sistema de reservas de canchas de fútbol.
                 
-                    FECHA ACTUAL DEL SISTEMA: %s
+                FECHA ACTUAL DEL SISTEMA: %s
                 
-                    CONTEXTO DE LA CONVERSACIÓN:
-                    %s
+                HISTORIAL COMPLETO DE LA CONVERSACIÓN (orden cronológico):
+                %s
                 
-                    MENSAJE ACTUAL DEL USUARIO:
-                    "%s"
+                MENSAJE ACTUAL DEL USUARIO:
+                "%s"
                 
-                    TAREA:
-                    Analizar el mensaje actual teniendo en cuenta el contexto SOLO si el usuario hace referencia explícita a algo anterior.
+                TAREA:
+                Analizar el mensaje actual teniendo en cuenta el flujo natural de la conversación.
                 
-                    RESPONDÉ ÚNICAMENTE con un JSON válido (sin texto, sin explicaciones, sin markdown).
+                El historial representa una conversación normal entre usuario y sistema.
+                Debes interpretarlo como memoria conversacional real, igual que lo haría una persona.
                 
-                    FORMATO EXACTO:
-                    {
-                      "intencion": "CREAR | CANCELAR | MODIFICAR | CONSULTAR | DISPONIBILIDAD",
-                      "fecha": "YYYY-MM-DD o null",
-                      "hora": "HH:mm o null",
-                      "canchaId": number o null
-                    }
+                Si el mensaje actual continúa una acción anterior (por ejemplo confirmar una cancha luego de consultar disponibilidad),
+                podés reutilizar fecha, hora o cancha mencionadas previamente aunque el usuario no lo repita explícitamente.
                 
-                    INTENCIONES POSIBLES (solo una):
-                    - CREAR → quiere reservar una cancha específica
-                    - DISPONIBILIDAD → pregunta horarios o quiere reservar sin indicar cancha
-                    - MODIFICAR → quiere cambiar fecha, hora o cancha
-                    - CANCELAR → quiere cancelar una reserva
-                    - CONSULTAR → pregunta qué reservas tiene o información general
+                IMPORTANTE:
+                - No inventar información que nunca haya sido mencionada en ningún momento de la conversación.
+                - Solo reutilizar datos si fueron mencionados anteriormente y son coherentes con el contexto actual.
+                - Si un dato no aparece en el mensaje actual ni en el historial → null.
                 
-                    REGLAS DE INTENCIÓN:
-                    - Si pregunta por horarios o disponibilidad → DISPONIBILIDAD
-                    - Si quiere reservar:
-                        - Si menciona cancha → CREAR
-                        - Si NO menciona cancha → DISPONIBILIDAD
-                    - Si quiere cambiar algo existente → MODIFICAR
-                    - Si quiere cancelar → CANCELAR
-                    - Si pregunta por sus reservas → CONSULTAR
+                RESPONDÉ ÚNICAMENTE con un JSON válido (sin texto, sin explicaciones).
                 
-                    REGLAS DE FECHA:
-                    - "hoy" → usar la fecha actual del sistema
-                    - "mañana" → fecha actual + 1 día
-                    - Día de la semana → próxima fecha de ese día
-                    - Si el mensaje actual hace referencia explícita a una fecha anterior (ej: "la misma fecha") → usar la del historial
-                    - Si no hay fecha clara → null
-                    - Formato obligatorio: YYYY-MM-DD
-                    - No usar texto como "hoy" o nombres de meses en la respuesta
+                FORMATO EXACTO:
+                {
+                  "intencion": "CREAR | CANCELAR | MODIFICAR | CONSULTAR | DISPONIBILIDAD",
+                  "fecha": "YYYY-MM-DD o null",
+                  "hora": "HH:mm o null",
+                  "canchaId": number o null
+                }
                 
-                    REGLAS DE HORA:
-                    - "9", "9 hs", "9h" → 09:00
-                    - "9:30" → 09:30
-                    - Si el mensaje dice "la misma hora" → usar la del historial
-                    - Si no menciona hora → null
-                    - Formato obligatorio: HH:mm
+                INTENCIONES POSIBLES (solo una):
+                - CREAR → quiere reservar una cancha específica
+                - DISPONIBILIDAD → pregunta horarios o quiere reservar sin indicar cancha
+                - MODIFICAR → quiere cambiar fecha, hora o cancha
+                - CANCELAR → quiere cancelar una reserva
+                - CONSULTAR → pregunta qué reservas tiene o información general
                 
-                    REGLAS DE CANCHA:
-                    - "cancha 3" → 3
-                    - "la misma cancha" → usar la del historial
-                    - Si no menciona cancha → null
-                    - Nunca asumir una cancha por defecto
+                REGLAS DE INTENCIÓN:
+                - Si el usuario está confirmando una opción mostrada previamente → CREAR
+                - Si pregunta por horarios → DISPONIBILIDAD
+                - Si quiere cambiar algo existente → MODIFICAR
+                - Si quiere cancelar → CANCELAR
+                - Si pregunta por sus reservas → CONSULTAR
                 
-                    USO DEL HISTORIAL:
-                    - Usar datos del historial SOLO si el mensaje actual lo referencia explícitamente:
-                      Ejemplos:
-                      "la misma"
-                      "esa"
-                      "cambiame el turno"
-                      "la misma hora"
-                    - Si no hay referencia explícita → no usar el historial
+                REGLAS DE FECHA:
+                - "hoy" → usar la fecha actual del sistema
+                - "mañana" → fecha actual + 1 día
+                - Día de la semana → próxima fecha de ese día
+                - Si no se menciona fecha en el mensaje actual pero existe una fecha activa en la conversación → reutilizarla
+                - Si nunca hubo fecha → null
+                - Formato obligatorio: YYYY-MM-DD
                 
-                    REGLA CRÍTICA (ANTI-ALUCINACIÓN):
-                    - NO inventes información
-                    - Si un dato no aparece en el mensaje actual ni en el historial → null
-                    - Nunca supongas fecha, hora o cancha
+                REGLAS DE HORA:
+                - "9", "9 hs", "9h" → 09:00
+                - "9:30" → 09:30
+                - Si no menciona hora pero existe una hora activa coherente en la conversación → reutilizarla
+                - Si nunca hubo hora → null
+                - Formato obligatorio: HH:mm
                 
-                    VALIDACIÓN FINAL:
-                    - Respondé solo el JSON
-                    - No agregues texto antes ni después
-                    - No agregues campos extra
-                    - Verificá que el JSON sea válido
+                REGLAS DE CANCHA:
+                - "cancha 3" → 3
+                - Si no menciona cancha pero está eligiendo una opción mostrada previamente → usar la correspondiente
+                - Si no hay cancha identificable → null
                 
-                    EJEMPLOS DE RESPUESTA:
-                
-                    {"intencion":"CREAR","fecha":"2026-02-20","hora":"18:00","canchaId":2}
-                    {"intencion":"DISPONIBILIDAD","fecha":"2026-02-21","hora":null,"canchaId":null}
-                    {"intencion":"CONSULTAR","fecha":null,"hora":null,"canchaId":null}
-                
-                    RESPUESTA:
+                VALIDACIÓN FINAL:
+                - Responder solo el JSON
+                - Sin texto adicional
+                - Sin markdown
+                - Sin campos extra
+                - Verificar que el JSON sea válido
                     """.formatted(hoy, HistorialMsj, mensajeRequest.mensaje());
 
 
@@ -310,7 +314,7 @@ Generá solo el mensaje para el cliente.
                     .user(prompt2)
                     .call()
                     .entity(DatosModificarAI.class);
-            var datosModificados = new DatosModificarReservaRequest(
+            var datosModificados = new DatosModificarReservaAI(
                     mensajeRequest.telefono(),
                     LocalDate.parse(datosModificar.fechaActual()),
                     LocalTime.parse(datosModificar.horaActual()),
@@ -399,6 +403,7 @@ Generá solo el mensaje para el cliente.
 
                         DatosDisponibilidadRequest datos = new DatosDisponibilidadRequest(fecha, cancha.getId());
                         List<LocalTime> disponibles = reservaService.obtenerHorariosDisponibles(datos);
+                        disponibles = filtrarHorariosPasados(disponibles, fecha);
 
                         if (!disponibles.isEmpty()) {
                             hayDisponibilidad = true;
@@ -420,6 +425,7 @@ Generá solo el mensaje para el cliente.
 
                     DatosDisponibilidadRequest datos = new DatosDisponibilidadRequest(fecha, canchaId);
                     List<LocalTime> disponibles = reservaService.obtenerHorariosDisponibles(datos);
+                    disponibles = filtrarHorariosPasados(disponibles, fecha);
 
                     String contexto;
 

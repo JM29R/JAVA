@@ -29,9 +29,15 @@ public class SecurityConfigurations {
         return http.csrf(csrf -> csrf.disable())
                 .sessionManagement(sm->sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(req ->{
-                    req.requestMatchers(HttpMethod.POST,"/login").permitAll();
-                    req.requestMatchers(HttpMethod.POST,"/chat").permitAll();
-                    req.anyRequest().authenticated();
+                    //API
+                    req.requestMatchers("/public/**").permitAll();
+                    //VISTAS
+                    req.requestMatchers("/", "/login").permitAll();
+                    req.requestMatchers("/css/**", "/js/**").permitAll();
+                    //VISTAS ADMIN
+                    req.requestMatchers("/admin/**").permitAll();
+                    //API
+                    req.requestMatchers("/API/**").authenticated();
                 })
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();

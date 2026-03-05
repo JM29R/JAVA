@@ -1,7 +1,7 @@
 package JMR.AICHAT.Cancha;
 
 
-import JMR.AICHAT.Reserva.Reserva;
+import JMR.AICHAT.Reserva.ReservaCRUD.Reserva;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

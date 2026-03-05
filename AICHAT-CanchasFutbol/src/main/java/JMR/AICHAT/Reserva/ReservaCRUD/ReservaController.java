@@ -1,15 +1,10 @@
-package JMR.AICHAT.Controller;
+package JMR.AICHAT.Reserva.ReservaCRUD;
 
 
 
 import JMR.AICHAT.Cancha.Cancha;
 import JMR.AICHAT.Cancha.CanchaRepository;
-import JMR.AICHAT.Reserva.DatosDisponibilidadRequest;
-import JMR.AICHAT.Reserva.DatosModificarReservaAI;
-import JMR.AICHAT.Reserva.DatosReservaRequest;
-import JMR.AICHAT.Reserva.ReservaMapper;
-import JMR.AICHAT.Reserva.*;
-import JMR.AICHAT.Service.ReservaService;
+import JMR.AICHAT.Reserva.ReservaAI.DatosModificarReservaAI;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -42,29 +37,14 @@ public class ReservaController {
 
     }
 
-    @Transactional
-    @PutMapping("/modificar")
-    public ResponseEntity modificar(@RequestBody @Valid DatosModificarReservaAI datos) {
+    @GetMapping("/todas")
+    public ResponseEntity<List<ReservaResponse>> listarTodas() {
+        List<Reserva> reservas = reservaRepository.findAll();
+        List<ReservaResponse> response = reservas.stream()
+                .map(ReservaMapper::toResponse)
+                .toList();
 
-        try{
-            Reserva reserva = reservaService.modificarReserva(datos);
-            return ResponseEntity.ok(ReservaMapper.toResponse(reserva));
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
-
-    }
-
-
-    @Transactional
-    @DeleteMapping("/{id}")
-    public ResponseEntity eliminarPorID(@PathVariable Long id) {
-        try {
-            reservaService.eliminarPorId(id);
-            return ResponseEntity.noContent().build();
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/disponibilidad")
@@ -77,15 +57,7 @@ public class ReservaController {
         }
     }
 
-    @GetMapping("/todas")
-    public ResponseEntity<List<ReservaResponse>> listarTodas() {
-        List<Reserva> reservas = reservaRepository.findAll();
-        List<ReservaResponse> response = reservas.stream()
-                .map(ReservaMapper::toResponse)
-                .toList();
 
-        return ResponseEntity.ok(response);
-    }
 
     @Transactional
     @PutMapping("/{id}")
@@ -99,6 +71,17 @@ public class ReservaController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
 
+    }
+
+    @Transactional
+    @DeleteMapping("/{id}")
+    public ResponseEntity eliminarPorID(@PathVariable Long id) {
+        try {
+            reservaService.eliminarPorId(id);
+            return ResponseEntity.noContent().build();
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @Transactional

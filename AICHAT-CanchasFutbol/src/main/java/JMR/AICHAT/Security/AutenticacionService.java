@@ -1,4 +1,4 @@
-package JMR.AICHAT.Service;
+package JMR.AICHAT.Security;
 
 
 import JMR.AICHAT.Usuario.UsuarioRepository;

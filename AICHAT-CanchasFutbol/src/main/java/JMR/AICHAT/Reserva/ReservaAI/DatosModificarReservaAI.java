@@ -1,4 +1,4 @@
-package JMR.AICHAT.Reserva;
+package JMR.AICHAT.Reserva.ReservaAI;
 
 import java.time.LocalDate;
 import java.time.LocalTime;

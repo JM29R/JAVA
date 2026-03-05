@@ -1,23 +1,18 @@
-package JMR.AICHAT.Service;
-
+package JMR.AICHAT.Reserva.ReservaAI;
 
 import JMR.AICHAT.Cancha.Cancha;
 import JMR.AICHAT.Cancha.CanchaRepository;
-import JMR.AICHAT.Reserva.DatosDisponibilidadRequest;
-import JMR.AICHAT.Reserva.DatosIdentificarReservaRequest;
-import JMR.AICHAT.Reserva.DatosModificarReservaAI;
-import JMR.AICHAT.Reserva.DatosReservaRequest;
-import JMR.AICHAT.Reserva.*;
+import JMR.AICHAT.Reserva.ReservaCRUD.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+
 
 @Service
-public class ReservaService {
+public class ReservaAIService {
 
     private static final int HORA_APERTURA = 8;
     private static final int HORA_CIERRE = 23;
@@ -26,6 +21,8 @@ public class ReservaService {
     @Autowired
     private ReservaRepository reservaRepository;
 
+
+    //SE USA EN AI
     public Reserva reservarCancha(DatosReservaRequest datos){
         if (datos.canchaId() == null) {
             throw new RuntimeException("el numero de la cancha es obligatorio para reservar");
@@ -53,6 +50,8 @@ public class ReservaService {
         return reserva;
     }
 
+
+    //SE USA EN AI
     public Reserva modificarReserva(DatosModificarReservaAI datos) {
 
         Reserva reserva = reservaRepository
@@ -85,6 +84,7 @@ public class ReservaService {
         return reservaRepository.save(reserva);
     }
 
+    //SE USA EN AI
     public void EliminarReserva(DatosIdentificarReservaRequest datos) {
         Reserva reserva = reservaRepository
                 .findByTelefonoAndFechaAndHora(
@@ -96,7 +96,7 @@ public class ReservaService {
 
         reservaRepository.delete(reserva);
     }
-
+    //SE USA EN AI Y EN CRUD
     public List<LocalTime> obtenerHorariosDisponibles(DatosDisponibilidadRequest datos) {
 
         Cancha cancha = canchaRepository
@@ -123,44 +123,6 @@ public class ReservaService {
         return todosLosHorarios;
     }
 
-    public void eliminarPorId(Long id) {
-        reservaRepository.deleteById(id);
-    }
-
-    public Reserva modificarReservaID(Long id, DatosModificarReservaRequest datos) {
-
-        Reserva reserva = reservaRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("No existe"));
-
-
-        Cancha cancha = canchaRepository
-                .findById(datos.canchaId())
-                .orElseThrow(() -> new RuntimeException("no se encontro cancha en esa ID"));
-
-        boolean ocupada = reservaRepository
-                .existsByCanchaAndFechaAndHoraAndIdNot(
-                        cancha,
-                        datos.fecha(),
-                        datos.hora(),
-                        id
-                );
-        if (ocupada) {
-            throw new RuntimeException("Ese horario ya está ocupado");
-        }
-
-        reserva.setFecha(datos.fecha());
-        reserva.setHora(datos.hora());
-        reserva.setCancha(cancha);
-        reserva.setNombreCliente(datos.nombreCliente());
-        reserva.setTelefono(datos.telefono());
-
-        return reservaRepository.save(reserva);
-
-
-    }
-
 
 
 }
-
-

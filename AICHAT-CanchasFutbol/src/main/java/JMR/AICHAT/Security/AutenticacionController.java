@@ -1,9 +1,6 @@
-package JMR.AICHAT.Controller;
+package JMR.AICHAT.Security;
 
 
-import JMR.AICHAT.Service.TokenService;
-import JMR.AICHAT.Security.DatosLogin;
-import JMR.AICHAT.Security.DatosTokenJWT;
 import JMR.AICHAT.Usuario.Usuario;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;

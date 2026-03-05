@@ -1,10 +1,6 @@
-package JMR.AICHAT.Controller;
+package JMR.AICHAT.Mensaje;
 
 
-import JMR.AICHAT.Mensaje.MensajeResponse;
-import JMR.AICHAT.Mensaje.MensajeMapper;
-import JMR.AICHAT.Mensaje.Mensaje;
-import JMR.AICHAT.Mensaje.MensajeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;

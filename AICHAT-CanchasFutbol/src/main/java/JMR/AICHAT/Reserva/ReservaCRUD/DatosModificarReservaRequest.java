@@ -1,15 +1,13 @@
-package JMR.AICHAT.Reserva;
+package JMR.AICHAT.Reserva.ReservaCRUD;
+
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-public record ReservaResponse(
-        Long id,
+public record DatosModificarReservaRequest(
         LocalDate fecha,
         LocalTime hora,
+        Long canchaId,
         String nombreCliente,
-        String telefono,
-        Long canchaId
-
-) {
-}
+        String telefono
+) {}

@@ -1,12 +1,10 @@
-package JMR.AICHAT.Controller;
+package JMR.AICHAT.ChatAI;
 
 
-import JMR.AICHAT.ChatAI.DatosFinalAI;
 import JMR.AICHAT.Mensaje.MensajeRequest;
 import JMR.AICHAT.Mensaje.MensajeMapper;
 import JMR.AICHAT.Mensaje.Mensaje;
 import JMR.AICHAT.Mensaje.MensajeRepository;
-import JMR.AICHAT.Service.GroqService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

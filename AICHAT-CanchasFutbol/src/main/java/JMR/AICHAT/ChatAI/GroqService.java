@@ -1,14 +1,17 @@
-package JMR.AICHAT.Service;
+package JMR.AICHAT.ChatAI;
 
 
 import JMR.AICHAT.Cancha.Cancha;
 import JMR.AICHAT.Cancha.CanchaRepository;
-import JMR.AICHAT.ChatAI.AnalisisAI;
-import JMR.AICHAT.ChatAI.DatosFinalAI;
-import JMR.AICHAT.ChatAI.DatosModificarAI;
 import JMR.AICHAT.Mensaje.Mensaje;
 import JMR.AICHAT.Mensaje.MensajeRequest;
-import JMR.AICHAT.Reserva.*;
+import JMR.AICHAT.Reserva.ReservaAI.DatosIdentificarReservaRequest;
+import JMR.AICHAT.Reserva.ReservaAI.DatosModificarReservaAI;
+import JMR.AICHAT.Reserva.ReservaAI.ReservaAIService;
+import JMR.AICHAT.Reserva.ReservaCRUD.DatosDisponibilidadRequest;
+import JMR.AICHAT.Reserva.ReservaCRUD.DatosReservaRequest;
+import JMR.AICHAT.Reserva.ReservaCRUD.Reserva;
+import JMR.AICHAT.Reserva.ReservaCRUD.ReservaRepository;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,7 +30,7 @@ public class GroqService {
     private ReservaRepository reservaRepository;
 
     @Autowired
-    private ReservaService reservaService;
+    private ReservaAIService reservaAIService;
 
     private  ChatClient chatClient;
 
@@ -264,7 +267,7 @@ Generá solo el mensaje para el cliente.
             try {
                 DatosReservaRequest datos = new DatosReservaRequest(mensajeRequest.fecha(),mensajeRequest.hora()
                         ,canchaIdLong,mensajeRequest.nombre(), mensajeRequest.telefono());
-            Reserva reserva = reservaService.reservarCancha(datos);
+            Reserva reserva = reservaAIService.reservarCancha(datos);
             String contexto= "Reserva creada correctamente."+ datos;
             return GestionarRespuesta(contexto);
 
@@ -273,7 +276,7 @@ Generá solo el mensaje para el cliente.
 
                     if (e.getMessage().contains("ocupado")) {
                         var datosdisponibles = new DatosDisponibilidadRequest(mensajeRequest.fecha(), canchaIdLong);
-                        List<LocalTime> disponibles = reservaService.obtenerHorariosDisponibles(datosdisponibles);
+                        List<LocalTime> disponibles = reservaAIService.obtenerHorariosDisponibles(datosdisponibles);
                         String consulta = "Horario ocupado" + disponibles.toString();
                         return GestionarRespuesta(consulta);
 
@@ -324,7 +327,7 @@ Generá solo el mensaje para el cliente.
                     mensajeRequest.nombre()
             );
             try {
-                Reserva reservamodificada = reservaService.modificarReserva(datosModificados);
+                Reserva reservamodificada = reservaAIService.modificarReserva(datosModificados);
                 String reservamod = "Reserva modificada correctamente." + reservamodificada.toString();
                 return GestionarRespuesta(reservamod);
             }catch (Exception e) {
@@ -367,7 +370,7 @@ Generá solo el mensaje para el cliente.
                             reservaCancelar.getHora(),
                             reservaCancelar.getTelefono()
                     );
-                    reservaService.EliminarReserva(datosCancelar);
+                    reservaAIService.EliminarReserva(datosCancelar);
                     String cancelar = "Reserva cancelada";
                     return GestionarRespuesta(cancelar);
                 }catch (Exception e) {
@@ -402,7 +405,7 @@ Generá solo el mensaje para el cliente.
                     for (Cancha cancha : canchas) {
 
                         DatosDisponibilidadRequest datos = new DatosDisponibilidadRequest(fecha, cancha.getId());
-                        List<LocalTime> disponibles = reservaService.obtenerHorariosDisponibles(datos);
+                        List<LocalTime> disponibles = reservaAIService.obtenerHorariosDisponibles(datos);
                         disponibles = filtrarHorariosPasados(disponibles, fecha);
 
                         if (!disponibles.isEmpty()) {
@@ -424,7 +427,7 @@ Generá solo el mensaje para el cliente.
                 else {
 
                     DatosDisponibilidadRequest datos = new DatosDisponibilidadRequest(fecha, canchaId);
-                    List<LocalTime> disponibles = reservaService.obtenerHorariosDisponibles(datos);
+                    List<LocalTime> disponibles = reservaAIService.obtenerHorariosDisponibles(datos);
                     disponibles = filtrarHorariosPasados(disponibles, fecha);
 
                     String contexto;

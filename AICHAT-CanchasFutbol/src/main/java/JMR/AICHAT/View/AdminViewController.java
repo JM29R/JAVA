@@ -1,4 +1,4 @@
-package JMR.AICHAT.Controller;
+package JMR.AICHAT.View;
 
 
 import org.springframework.stereotype.Controller;

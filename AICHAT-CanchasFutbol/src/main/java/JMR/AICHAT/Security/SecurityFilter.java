@@ -2,8 +2,6 @@ package JMR.AICHAT.Security;
 
 
 
-import JMR.AICHAT.Service.TokenService;
-import JMR.AICHAT.Usuario.Usuario;
 import JMR.AICHAT.Usuario.UsuarioRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

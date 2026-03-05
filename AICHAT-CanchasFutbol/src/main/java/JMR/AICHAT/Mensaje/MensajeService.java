@@ -1,8 +1,5 @@
-package JMR.AICHAT.Service;
+package JMR.AICHAT.Mensaje;
 
-import JMR.AICHAT.Mensaje.DatosMensaje;
-import JMR.AICHAT.Mensaje.Mensaje;
-import JMR.AICHAT.Mensaje.MensajeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class MensajeService {

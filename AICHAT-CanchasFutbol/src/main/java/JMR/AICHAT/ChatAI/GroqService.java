@@ -12,30 +12,28 @@ import JMR.AICHAT.Reserva.ReservaCRUD.DatosDisponibilidadRequest;
 import JMR.AICHAT.Reserva.ReservaCRUD.DatosReservaRequest;
 import JMR.AICHAT.Reserva.ReservaCRUD.Reserva;
 import JMR.AICHAT.Reserva.ReservaCRUD.ReservaRepository;
+import jakarta.annotation.PostConstruct;
+import lombok.RequiredArgsConstructor;
 import org.springframework.ai.chat.client.ChatClient;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
+@RequiredArgsConstructor
 @Service
 public class GroqService {
 
-    @Autowired
-    private CanchaRepository canchaRepository;
+    private final CanchaRepository canchaRepository;
+    private final ReservaRepository reservaRepository;
+    private final ReservaAIService reservaAIService;
+    private final ChatClient.Builder chatClientBuilder;
 
-    @Autowired
-    private ReservaRepository reservaRepository;
+    private ChatClient chatClient;
 
-    @Autowired
-    private ReservaAIService reservaAIService;
-
-    private  ChatClient chatClient;
-
-    public GroqService(ChatClient.Builder chatClientBuilder) {
-        this.chatClient = chatClientBuilder.build();
+    @PostConstruct
+    void init() {
+        chatClient = chatClientBuilder.build();
     }
 
     private String formatearHistorial(List<Mensaje> historial) {

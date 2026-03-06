@@ -3,7 +3,8 @@ package JMR.AICHAT.Security;
 
 import JMR.AICHAT.Usuario.Usuario;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -12,13 +13,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/public/login")
 public class AutenticacionController {
-    @Autowired
-    private TokenService tokenService;
-    @Autowired
-    private AuthenticationManager manager;
+
+    private final TokenService tokenService;
+
+    private final AuthenticationManager manager;
 
     @PostMapping
     public ResponseEntity InciarSesion(@Valid @RequestBody DatosLogin datos){

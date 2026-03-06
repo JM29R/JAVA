@@ -5,7 +5,6 @@ import JMR.AICHAT.Mensaje.MensajeRequest;
 import JMR.AICHAT.Mensaje.MensajeMapper;
 import JMR.AICHAT.Mensaje.Mensaje;
 import JMR.AICHAT.Mensaje.MensajeRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
@@ -14,12 +13,14 @@ import java.util.List;
 @RequestMapping("/public/chat")
 public class AIController {
 
+    private final MensajeRepository mensajeRepository;
+    private final GroqService groqService;
 
-    @Autowired
-    private MensajeRepository mensajeRepository;
+    public AIController(MensajeRepository mensajeRepository, GroqService groqService) {
+        this.mensajeRepository = mensajeRepository;
+        this.groqService = groqService;
+    }
 
-    @Autowired
-    private GroqService groqService;
 
     @PostMapping
     public ResponseEntity<String> reservarConAI(@RequestBody MensajeRequest request) {

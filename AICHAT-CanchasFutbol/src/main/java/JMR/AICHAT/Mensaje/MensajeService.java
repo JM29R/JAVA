@@ -1,12 +1,17 @@
 package JMR.AICHAT.Mensaje;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+@Service
 public class MensajeService {
-    @Autowired
-    private MensajeRepository mensajeRepository;
 
-    //Guardar
+    private final MensajeRepository mensajeRepository;
+
+    public MensajeService(MensajeRepository mensajeRepository) {
+        this.mensajeRepository = mensajeRepository;
+    }
+
 
     public void guardarMensaje(DatosMensaje datos) {
         var mensaje = new Mensaje();

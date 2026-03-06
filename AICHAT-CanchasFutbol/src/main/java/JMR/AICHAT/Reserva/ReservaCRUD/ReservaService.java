@@ -3,24 +3,23 @@ package JMR.AICHAT.Reserva.ReservaCRUD;
 
 import JMR.AICHAT.Cancha.Cancha;
 import JMR.AICHAT.Cancha.CanchaRepository;
-import JMR.AICHAT.Reserva.ReservaAI.DatosIdentificarReservaRequest;
-import JMR.AICHAT.Reserva.ReservaAI.DatosModificarReservaAI;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Service;
 
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
-
+@RequiredArgsConstructor
 @Service
 public class ReservaService {
 
     private static final int HORA_APERTURA = 8;
     private static final int HORA_CIERRE = 23;
-    @Autowired
-    private CanchaRepository canchaRepository;
-    @Autowired
-    private ReservaRepository reservaRepository;
+
+    private final CanchaRepository canchaRepository;
+
+    private final ReservaRepository reservaRepository;
 
     //SE USA EN CRUD
     public List<LocalTime> obtenerHorariosDisponibles(DatosDisponibilidadRequest datos) {

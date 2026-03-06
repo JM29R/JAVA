@@ -10,8 +10,10 @@ import java.util.List;
 @Service
 public class CanchaService {
 
-    @Autowired
-    private CanchaRepository canchaRepository;
+    private final CanchaRepository canchaRepository;
+    public CanchaService(CanchaRepository canchaRepository) {
+        this.canchaRepository = canchaRepository;
+    }
 
     public Cancha crearCancha(DatosCanchaRequest datos) {
         Cancha cancha = new Cancha();

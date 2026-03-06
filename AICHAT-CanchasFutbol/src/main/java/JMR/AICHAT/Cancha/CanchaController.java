@@ -2,7 +2,6 @@ package JMR.AICHAT.Cancha;
 
 
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,12 +14,13 @@ import java.util.List;
 
 public class CanchaController {
 
-    @Autowired
-    private CanchaRepository canchaRepository;
+    private final CanchaRepository canchaRepository;
+    private final CanchaService canchaService;
 
-    @Autowired
-    private CanchaService canchaService;
-
+    public CanchaController(CanchaRepository canchaRepository, CanchaService canchaService) {
+        this.canchaRepository = canchaRepository;
+        this.canchaService = canchaService;
+    }
     @Transactional
     @PostMapping
     public ResponseEntity Crear(@Valid @RequestBody DatosCanchaRequest datos){

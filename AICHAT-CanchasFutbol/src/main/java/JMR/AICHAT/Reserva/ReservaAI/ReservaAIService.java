@@ -16,10 +16,15 @@ public class ReservaAIService {
 
     private static final int HORA_APERTURA = 8;
     private static final int HORA_CIERRE = 23;
-    @Autowired
-    private CanchaRepository canchaRepository;
-    @Autowired
-    private ReservaRepository reservaRepository;
+
+    private final CanchaRepository canchaRepository;
+
+    private final ReservaRepository reservaRepository;
+
+    public ReservaAIService(CanchaRepository canchaRepository, ReservaRepository reservaRepository) {
+        this.canchaRepository = canchaRepository;
+        this.reservaRepository = reservaRepository;
+    }
 
 
     //SE USA EN AI

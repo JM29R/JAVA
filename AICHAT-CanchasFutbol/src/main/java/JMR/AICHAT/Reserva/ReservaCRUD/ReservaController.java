@@ -4,9 +4,8 @@ package JMR.AICHAT.Reserva.ReservaCRUD;
 
 import JMR.AICHAT.Cancha.Cancha;
 import JMR.AICHAT.Cancha.CanchaRepository;
-import JMR.AICHAT.Reserva.ReservaAI.DatosModificarReservaAI;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -14,16 +13,14 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalTime;
 import java.util.List;
 
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/API/reservar")
 public class ReservaController {
 
-    @Autowired
-    private ReservaService reservaService;
-    @Autowired
-    private CanchaRepository canchaRepository;
-    @Autowired
-    private ReservaRepository reservaRepository;
+    private final ReservaService reservaService;
+    private final CanchaRepository canchaRepository;
+    private final ReservaRepository reservaRepository;
 
     @Transactional
     @PostMapping

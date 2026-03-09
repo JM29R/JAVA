@@ -16,7 +16,7 @@
     <!-- Project Info -->
     <groupId>jmr</groupId>
     <artifactId>aichat</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.1</version>
     <name>aichat</name>
     <description>Chat inteligente para negocio</description>
 

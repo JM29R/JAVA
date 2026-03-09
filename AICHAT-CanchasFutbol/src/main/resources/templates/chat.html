@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es" data-bs-theme="dark">
+<html lang="es" data-bs-theme="dark" xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Chat Reservas</title>
     <meta charset="UTF-8">
@@ -71,6 +71,29 @@
     }
 
     </style>
+
+    <!-- 🔴 CONFIGURACIÓN CRÍTICA: Se ejecuta ANTES que cualquier script -->
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        (function() {
+            // Obtener la URL base del servidor usando Thymeleaf
+            var requestURL = /*[[${#request.getRequestURL()}]]*/ '';
+            var requestURI = /*[[${#request.getRequestURI()}]]*/ '';
+            var baseUrl = requestURL.replace(requestURI, '');
+
+            // Guardar en window para que esté disponible globalmente
+            window.BASE_URL = baseUrl;
+
+            console.log('🔧 Configuración Thymeleaf - BASE_URL:', window.BASE_URL);
+            console.log('📊 Debug:', {
+                requestURL: requestURL,
+                requestURI: requestURI,
+                baseUrl: baseUrl,
+                origin: window.location.origin
+            });
+        })();
+        /*]]>*/
+    </script>
 </head>
 
 <body class="container mt-5">
@@ -98,25 +121,22 @@
     </div>
     <button class="btn btn-success w-100 " onclick="iniciarChat()"> Comenzar Chat </button>
 </div>
+
 <!-- CHAT -->
 <div id="chatContainer" style="display:none;">
-
     <div class="chat-box mb-3" id="chatBox"></div>
-
     <div class="input-group">
         <input type="text" id="mensaje" class="form-control" placeholder="Escribí tu mensaje...">
         <button class="btn btn-primary " onclick="enviarMensaje()">Enviar</button>
     </div>
-
-
-
 </div>
 
 <button class="btn btn-success w-100 mt-3" onclick="paneladmin()">
     Login ADMIN
 </button>
 
-<script src="/js/chat.js"> </script>
+<!-- 🔴 IMPORTANTE: Agregamos un timestamp para evitar caché -->
+<script th:src="@{/js/chat.js(v=${#dates.createNow().time})}"></script>
 
 </body>
 </html>

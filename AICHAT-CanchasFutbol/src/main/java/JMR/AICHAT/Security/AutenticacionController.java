@@ -15,14 +15,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/public/login")
+@RequestMapping("/public")
 public class AutenticacionController {
 
     private final TokenService tokenService;
 
     private final AuthenticationManager manager;
 
-    @PostMapping
+    @PostMapping("/login")
     public ResponseEntity InciarSesion(@Valid @RequestBody DatosLogin datos){
         var tokenaut = new UsernamePasswordAuthenticationToken(datos.user(), datos.pass());
         var aut = manager.authenticate(tokenaut);

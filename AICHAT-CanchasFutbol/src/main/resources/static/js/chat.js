@@ -1,31 +1,19 @@
-// js/chat.js - VERSIÓN 2.0 (con detección de caché)
-
+// js/chat.js
 console.log('🔄 Cargando chat.js - Versión:', Date.now());
 
-// Detectar si es una versión en caché (la que usa localhost)
-if (typeof BASE_URL === 'undefined' ||
-    (typeof BASE_URL === 'string' && BASE_URL.includes('localhost'))) {
-    console.warn('⚠️ Versión antigua detectada! Forzando recarga sin caché...');
-
-    // Crear un timestamp único y recargar
-    var timestamp = new Date().getTime();
-    var scripts = document.getElementsByTagName('script');
-    for (var i = 0; i < scripts.length; i++) {
-        if (scripts[i].src && scripts[i].src.includes('chat.js')) {
-            var newSrc = scripts[i].src.split('?')[0] + '?v=' + timestamp;
-            console.log('📦 Recargando script desde:', newSrc);
-            scripts[i].src = newSrc;
-            break;
-        }
-    }
-}
-
-// Obtener BASE_URL (de window, forzado por Thymeleaf)
-const BASE_URL = window.BASE_URL || window.location.origin;
-console.log('🌐 BASE_URL final:', BASE_URL);
-
+// Variables globales del usuario
 let nombreGlobal = "";
 let telefonoGlobal = "";
+
+// Usar BASE_URL de window (configurado por Thymeleaf desde el controlador)
+const BASE_URL = window.BASE_URL || window.location.origin;
+console.log('🌐 BASE_URL:', BASE_URL);
+
+// Verificar que no estamos usando localhost incorrectamente
+if (BASE_URL.includes('localhost') && !window.location.hostname.includes('localhost')) {
+    console.warn('⚠️ ATENCIÓN: Usando localhost en producción, forzando origin');
+    window.BASE_URL = window.location.origin;
+}
 
 // ---------- PANEL DE ADMIN ----------
 function paneladmin() {
@@ -84,10 +72,13 @@ async function enviarMensaje() {
     input.value = "";
 
     try {
-        // Construir URL de manera explícita
         const url = BASE_URL + "/public/chat";
         console.log('📤 Enviando mensaje a:', url);
-        console.log('📦 Datos:', { nombre: nombreGlobal, telefono: telefonoGlobal, mensaje: texto });
+        console.log('📦 Datos:', {
+            nombre: nombreGlobal,
+            telefono: telefonoGlobal,
+            mensaje: texto
+        });
 
         const response = await fetch(url, {
             method: "POST",
@@ -101,11 +92,11 @@ async function enviarMensaje() {
             })
         });
 
-        console.log('📥 Respuesta recibida - Status:', response.status);
+        console.log('📥 Respuesta - Status:', response.status);
 
         if (!response.ok) {
             const errorText = await response.text();
-            console.error('Error del servidor:', errorText);
+            console.error('❌ Error del servidor:', errorText);
             agregarMensajeBot("Hubo un error, intenta nuevamente.");
             return;
         }
@@ -115,20 +106,11 @@ async function enviarMensaje() {
         agregarMensajeBot(data);
 
     } catch (error) {
-        console.error('❌ ERROR COMPLETO:');
-        console.error('Nombre:', error.name);
-        console.error('Mensaje:', error.message);
-        console.error('URL intentada:', BASE_URL + "/public/chat");
+        console.error('❌ Error completo:', error);
+        console.error('URL que falló:', BASE_URL + "/public/chat");
         console.error('BASE_URL actual:', BASE_URL);
-        console.error('Stack:', error.stack);
-
-        agregarMensajeBot("Error de conexión. Revisa la consola (F12)");
+        agregarMensajeBot("Error de conexión. Revisa consola (F12)");
     }
 }
 
-console.log('✅ chat.js cargado completamente - Versión moderna');
-console.log('📌 Configuración final:', {
-    BASE_URL: BASE_URL,
-    origin: window.location.origin,
-    href: window.location.href
-});
+console.log('✅ chat.js cargado correctamente');

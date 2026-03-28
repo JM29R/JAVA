@@ -2,6 +2,7 @@ package JMR.Forum.Infrastructure.controller;
 
 
 import JMR.Forum.Infrastructure.Dtos.Request.RespuestaRequest;
+import JMR.Forum.Infrastructure.Dtos.Request.UsuarioRequest;
 import JMR.Forum.Infrastructure.Dtos.Response.RespuestaResponse;
 import JMR.Forum.application.service.RespuestaService;
 import lombok.RequiredArgsConstructor;
@@ -46,9 +47,9 @@ public class RespuestaController {
     @PreAuthorize("isAuthenticated()")
     @DeleteMapping("/{id}")
     @Transactional
-    public ResponseEntity eliminarRespuesta(@PathVariable Long id) {
+    public ResponseEntity eliminarRespuesta(@PathVariable Long id,@RequestBody UsuarioRequest usuarioRequest) {
 
-        respuestaService.eliminar(id);
+        respuestaService.eliminar(id,usuarioRequest);
         return ResponseEntity.noContent().build();
     }
 

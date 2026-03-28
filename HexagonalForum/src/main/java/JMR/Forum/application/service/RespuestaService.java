@@ -1,10 +1,12 @@
 package JMR.Forum.application.service;
 
 import JMR.Forum.Infrastructure.Dtos.Request.RespuestaRequest;
+import JMR.Forum.Infrastructure.Dtos.Request.UsuarioRequest;
 import JMR.Forum.Infrastructure.Dtos.Response.RespuestaResponse;
 import JMR.Forum.Infrastructure.persistence.Respuesta.Mapper.RespuestaDTOMapper;
 import JMR.Forum.domain.model.Respuesta;
 import JMR.Forum.domain.model.Topico;
+import JMR.Forum.domain.model.Usuario.Roles;
 import JMR.Forum.domain.model.Usuario.Usuario;
 import JMR.Forum.domain.repository.RespuestaRepository;
 import JMR.Forum.domain.repository.TopicoRepository;
@@ -24,6 +26,13 @@ public class RespuestaService {
     private final UsuarioRepository usuarioRepository;
 
     private final TopicoRepository topicoRepository;
+
+    private boolean puedeEliminar(Usuario user, Respuesta respuesta) {
+        return user.getId().equals(respuesta.getAutor().getId())// si es el autor de la respuesta
+                || user.getRol() == Roles.ROLE_ADMIN//si es admin
+                || user.getId().equals(respuesta.getTopico().getAutor().getId());//si es el autor del topico
+    }
+
 
 
     public RespuestaResponse crear(RespuestaRequest request){
@@ -57,9 +66,16 @@ public class RespuestaService {
 
     }
 
-    public void eliminar(long id){
+    public void eliminar(long id, UsuarioRequest usuarioRequest) {
         Respuesta respuesta = respuestaRepository.buscarPorId(id)
                 .orElseThrow(() -> new RuntimeException("Respuesta no encontrada"));
+
+        Usuario user = usuarioRepository.findByNombre(usuarioRequest.nombre())
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        if (!puedeEliminar(user, respuesta)) {
+            throw new RuntimeException("No tienes permiso para eliminar esta respuesta");
+        }
 
         respuestaRepository.borrar(respuesta);
     }

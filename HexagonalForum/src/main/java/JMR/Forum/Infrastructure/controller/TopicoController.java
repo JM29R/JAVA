@@ -10,8 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -49,8 +47,8 @@ public class TopicoController {
     @DeleteMapping("/delete/{id}")
     @Transactional
    public ResponseEntity<Boolean> eliminarTopico(@PathVariable Long id,@RequestBody UsuarioRequest usuarioRequest) {
-        Boolean t = topicoService.eliminar(id,usuarioRequest);
-        return ResponseEntity.ok(t);
+        topicoService.eliminar(id,usuarioRequest);
+        return ResponseEntity.noContent().build();
 
 
    }

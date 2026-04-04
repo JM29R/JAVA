@@ -59,7 +59,7 @@ public class RespuestaService {
 
     public List<RespuestaResponse> listarPorUsuario(Long idUsuario) {
 
-        return respuestaRepository.buscarPorUsuario(idUsuario)
+        return respuestaRepository.buscarTodosPorUsuario(idUsuario)
                 .stream()
                 .map(respuestaDTOMapper::toResponse)
                 .toList();

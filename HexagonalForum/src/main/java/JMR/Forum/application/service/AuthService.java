@@ -22,6 +22,9 @@ public class AuthService {
     private final JwtService jwtService;
 
     public JWTResponse login(UsuarioRequest request) {
+        Usuario user = usuarioRepository.findByNombre(request.nombre())
+                .orElseThrow(()-> new RuntimeException("Usuario no encontrado"));
+        Long iduser = user.getId();
         try {
 
             Authentication authentication = authenticationManager.authenticate(
@@ -41,7 +44,7 @@ public class AuthService {
 
             String token = jwtService.generateToken(usuario.getNombre(), usuario.getRol().name());
 
-            return new JWTResponse(token);
+            return new JWTResponse(token,iduser);
 
 
         } catch (BadCredentialsException e) {

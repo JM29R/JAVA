@@ -1,0 +1,50 @@
+/* 🎨 Fondo general */
+body {
+    background-color: #1e1e1e;
+    color: #ffffff;
+    font-family: Arial, sans-serif;
+}
+
+/* 🧱 Card reutilizable */
+.card-custom {
+    background-color: #2a2a2a;
+    border-radius: 16px;
+    padding: 30px;
+}
+
+/* 🟦 Botones */
+.btn-primary {
+    background-color: #3b82f6;
+    border: none;
+}
+
+.btn-primary:hover {
+    background-color: #2563eb;
+}
+
+/* ❗ Errores */
+.error-text {
+    color: #ff4d4d;
+}
+
+/* 🧾 Inputs */
+.form-control {
+    background-color: #333;
+    border: none;
+    color: white;
+}
+
+.form-control:focus {
+    background-color: #444;
+    color: white;
+}
+
+.btn-red {
+    background-color: #ff4d4d;
+    border: none;
+    color: white;
+}
+
+.btn-red:hover {
+    background-color: #e60000;
+}

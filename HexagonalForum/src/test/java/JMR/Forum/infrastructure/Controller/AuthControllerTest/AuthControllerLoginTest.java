@@ -34,7 +34,7 @@ public class AuthControllerLoginTest {
     @Test
     void deberiaRetornar200CuandoLoginEsCorrecto() throws Exception {
 
-        JWTResponse response = new JWTResponse("token123");
+        JWTResponse response = new JWTResponse("token123",1L);
 
         when(authService.login(any()))
                 .thenReturn(response);

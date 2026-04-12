@@ -2,6 +2,7 @@ package JMR.Forum.application.service;
 
 
 import JMR.Forum.Infrastructure.Dtos.Request.TopicoRequest;
+import JMR.Forum.Infrastructure.Dtos.Request.UsuarioLoginRequest;
 import JMR.Forum.Infrastructure.Dtos.Request.UsuarioRequest;
 import JMR.Forum.Infrastructure.Dtos.Response.TopicoResponse;
 import JMR.Forum.Infrastructure.persistence.Topico.Mapper.TopicoDTOMapper;
@@ -11,10 +12,10 @@ import JMR.Forum.domain.model.Usuario.Usuario;
 import JMR.Forum.domain.repository.TopicoRepository;
 import JMR.Forum.domain.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 
 @Service
@@ -57,10 +58,15 @@ public class TopicoService {
         return topicoMapper.toResponse(topico);
     }
 
-    public void eliminar(Long id, UsuarioRequest usuarioRequest) {
+    public void eliminar(Long id) {
         Topico topico = topicoRepository.buscarPorId(id)
                 .orElseThrow(() -> new RuntimeException("Topico no encontrado"));
-        Usuario user = usuarioRepository.findByNombre(usuarioRequest.nombre())
+
+        String username = SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getName();
+
+        Usuario user = usuarioRepository.findByNombre(username)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
         if (!puedeEliminar(user, topico)) {

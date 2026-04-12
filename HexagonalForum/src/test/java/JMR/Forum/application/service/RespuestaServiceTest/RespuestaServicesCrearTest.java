@@ -47,7 +47,7 @@ public class RespuestaServicesCrearTest {
         @Test
         void deberiaCrearRespuestaCorrectamente() {
 
-            RespuestaRequest request = new RespuestaRequest(1L,"mensaje",2L,3L);
+            RespuestaRequest request = new RespuestaRequest("mensaje",2L,3L);
 
             Usuario usuario = Usuario.builder().id(1L).build();
             Topico topico = new Topico();
@@ -85,7 +85,7 @@ public class RespuestaServicesCrearTest {
     @Test
     void deberiaLanzarErrorSiUsuarioNoExiste() {
 
-        RespuestaRequest request = new RespuestaRequest(1L ,"mensaje",2L,3L);
+        RespuestaRequest request = new RespuestaRequest("mensaje",2L,3L);
 
         when(usuarioRepository.buscarPorId(3L))
                 .thenReturn(Optional.empty());
@@ -100,7 +100,7 @@ public class RespuestaServicesCrearTest {
     @Test
     void deberiaLanzarErrorSiTopicoNoExiste() {
 
-        RespuestaRequest request = new RespuestaRequest(1L,  "mensaje",2L,3L);
+        RespuestaRequest request = new RespuestaRequest( "mensaje",2L,3L);
 
         Usuario usuario = Usuario.builder().id(3L).build();
 

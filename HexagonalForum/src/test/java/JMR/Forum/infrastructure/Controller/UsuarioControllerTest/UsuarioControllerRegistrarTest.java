@@ -1,6 +1,6 @@
 package JMR.Forum.infrastructure.Controller.UsuarioControllerTest;
 
-import JMR.Forum.Infrastructure.Dtos.Request.UsuarioRequest;
+import JMR.Forum.Infrastructure.Dtos.Request.UsuarioLoginRequest;
 import JMR.Forum.Infrastructure.Dtos.Response.UsuarioResponse;
 import JMR.Forum.Infrastructure.Security.JwtService;
 import JMR.Forum.Infrastructure.controller.UsuarioController;
@@ -39,7 +39,7 @@ class UsuarioControllerRegistrarTest {
     @Test
     void deberiaRegistrarUsuario() throws Exception {
 
-        UsuarioRequest request = new UsuarioRequest("juan", "1234");
+        UsuarioLoginRequest request = new UsuarioLoginRequest("juan", "1234");
 
         UsuarioResponse response = new UsuarioResponse(1L, "juan", "ROLE_USER",true );
 

@@ -1,6 +1,6 @@
 package JMR.Forum.application.service.UsuarioServiceTest;
 
-import JMR.Forum.Infrastructure.Dtos.Request.UsuarioRequest;
+import JMR.Forum.Infrastructure.Dtos.Request.UsuarioLoginRequest;
 import JMR.Forum.Infrastructure.Dtos.Response.UsuarioResponse;
 import JMR.Forum.Infrastructure.persistence.Usuario.Mapper.UsuarioDTOMapper;
 import JMR.Forum.application.service.UsuarioService;
@@ -39,7 +39,7 @@ public class UsuarioServiceEditarUsuarioTest {
         Usuario usuario = new Usuario();
         usuario.setNombre("viejo");
 
-        UsuarioRequest request = new UsuarioRequest("nuevo", "1234");
+        UsuarioLoginRequest request = new UsuarioLoginRequest("nuevo", "1234");
 
         Usuario actualizado = new Usuario();
         actualizado.setNombre("nuevo");

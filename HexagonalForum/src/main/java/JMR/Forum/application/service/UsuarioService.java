@@ -1,7 +1,7 @@
 package JMR.Forum.application.service;
 
 
-import JMR.Forum.Infrastructure.Dtos.Request.UsuarioRequest;
+import JMR.Forum.Infrastructure.Dtos.Request.UsuarioLoginRequest;
 import JMR.Forum.Infrastructure.Dtos.Response.UsuarioResponse;
 import JMR.Forum.Infrastructure.persistence.Usuario.Mapper.UsuarioDTOMapper;
 import JMR.Forum.domain.model.Usuario.Roles;
@@ -12,6 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @AllArgsConstructor
 @Service
@@ -23,8 +24,23 @@ public class UsuarioService {
 
     private PasswordEncoder passwordEncoder;
 
+    private boolean puedeCrear(UsuarioLoginRequest usuarioRequest) {
+        Optional<Usuario> userOpt = usuarioRepository.findByNombre(usuarioRequest.nombre());
 
-    public UsuarioResponse crearUsuario(UsuarioRequest request) {
+        if (userOpt.isEmpty()) {
+            return true;
+        }
+
+        Usuario user = userOpt.get();
+        return !user.isActivo();
+
+    }
+
+
+    public UsuarioResponse crearUsuario(UsuarioLoginRequest request) {
+        if (!puedeCrear(request)) {
+            throw new RuntimeException("Ya existe un usuario activo con ese nombre");
+        }
         Usuario usuario = new Usuario();
         usuario.setNombre(request.nombre());
         usuario.setPassword(passwordEncoder.encode(request.password()));
@@ -55,7 +71,7 @@ public class UsuarioService {
         return user.isActivo();
     }
 
-    public UsuarioResponse editarUsuario(Long id, UsuarioRequest request) {
+    public UsuarioResponse editarUsuario(Long id, UsuarioLoginRequest request) {
         Usuario usuario = usuarioRepository.buscarPorId(id)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 

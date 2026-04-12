@@ -44,13 +44,11 @@ public class TopicoController {
     }
 
     @PreAuthorize("isAuthenticated()")
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     @Transactional
-   public ResponseEntity<Boolean> eliminarTopico(@PathVariable Long id,@RequestBody UsuarioRequest usuarioRequest) {
-        topicoService.eliminar(id,usuarioRequest);
+   public ResponseEntity<Void> eliminarTopico(@PathVariable Long id) {
+        topicoService.eliminar(id);
         return ResponseEntity.noContent().build();
-
-
    }
 
 

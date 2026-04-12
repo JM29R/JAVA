@@ -1,10 +1,9 @@
 package JMR.Forum.infrastructure.Controller.RespuestaControllerTest;
 
-
-import JMR.Forum.Infrastructure.Dtos.Request.UsuarioRequest;
 import JMR.Forum.Infrastructure.Security.JwtService;
 import JMR.Forum.Infrastructure.controller.RespuestaController;
 import JMR.Forum.application.service.RespuestaService;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -13,11 +12,11 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 
 @WebMvcTest(RespuestaController.class)
 @AutoConfigureMockMvc(addFilters = false)
@@ -36,16 +35,13 @@ public class RespuestaControllerDeleteTest {
     @Test
     void deberiaEliminarRespuestaCorrectamente() throws Exception {
 
-        doNothing().when(respuestaService)
-                .eliminar(eq(1L), any(UsuarioRequest.class));
+        doNothing().when(respuestaService).eliminar(1L);
 
         mockMvc.perform(delete("/respuestas/1")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("""
-                        {
-                            "nombre": "juan"
-                        }
-                    """))
+                        .with(user("juan"))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent());
+
+        verify(respuestaService).eliminar(1L);
     }
 }

@@ -1,6 +1,6 @@
 package JMR.Forum.infrastructure.Controller.TopicoControllerTest;
 
-import JMR.Forum.Infrastructure.Dtos.Request.UsuarioRequest;
+
 import JMR.Forum.Infrastructure.Security.JwtService;
 import JMR.Forum.Infrastructure.controller.TopicoController;
 import JMR.Forum.application.service.TopicoService;
@@ -13,9 +13,9 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.verify;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -38,14 +38,14 @@ class TopicoControllerDeleteTest {
     @Test
     void deberiaEliminarTopico() throws Exception {
 
-        UsuarioRequest usuarioRequest = new UsuarioRequest("juan", "1234");
+        doNothing().when(topicoService).eliminar(1L);
 
-        doNothing().when(topicoService).eliminar(eq(1L), any());
-
-        mockMvc.perform(delete("/topicos/delete/1")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(usuarioRequest)))
+        mockMvc.perform(delete("/topicos/1")
+                        .with(user("juan"))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent());
+
+        verify(topicoService).eliminar(1L);
     }
 
 }

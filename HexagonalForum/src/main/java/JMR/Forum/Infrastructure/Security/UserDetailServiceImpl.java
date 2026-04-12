@@ -1,6 +1,5 @@
 package JMR.Forum.Infrastructure.Security;
 
-import JMR.Forum.Infrastructure.Dtos.Request.UsuarioRequest;
 import JMR.Forum.domain.model.Usuario.Usuario;
 import JMR.Forum.domain.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;

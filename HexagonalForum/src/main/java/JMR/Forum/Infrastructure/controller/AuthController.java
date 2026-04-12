@@ -1,9 +1,8 @@
 package JMR.Forum.Infrastructure.controller;
 
 
-import JMR.Forum.Infrastructure.Dtos.Request.UsuarioRequest;
+import JMR.Forum.Infrastructure.Dtos.Request.UsuarioLoginRequest;
 import JMR.Forum.Infrastructure.Dtos.Response.JWTResponse;
-import JMR.Forum.Infrastructure.Dtos.Response.UsuarioResponse;
 import JMR.Forum.application.service.AuthService;
 
 import lombok.RequiredArgsConstructor;
@@ -22,7 +21,7 @@ public class AuthController {
 
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody UsuarioRequest request) {
+    public ResponseEntity<?> login(@RequestBody UsuarioLoginRequest request) {
         try {
             JWTResponse response = authService.login(request);
             return ResponseEntity.ok(response);

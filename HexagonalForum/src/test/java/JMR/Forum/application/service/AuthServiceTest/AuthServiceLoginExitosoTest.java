@@ -1,7 +1,7 @@
 package JMR.Forum.application.service.AuthServiceTest;
 
 
-import JMR.Forum.Infrastructure.Dtos.Request.UsuarioRequest;
+import JMR.Forum.Infrastructure.Dtos.Request.UsuarioLoginRequest;
 import JMR.Forum.Infrastructure.Dtos.Response.JWTResponse;
 import JMR.Forum.Infrastructure.Security.JwtService;
 import JMR.Forum.application.service.AuthService;
@@ -43,7 +43,7 @@ public class AuthServiceLoginExitosoTest {
     @Test
     void deberiaLoguearCorrectamente() {
 
-        UsuarioRequest request = new UsuarioRequest("juan", "1234");
+        UsuarioLoginRequest request = new UsuarioLoginRequest("juan", "1234");
 
         Usuario usuario = Usuario.builder()
                 .nombre("juan")

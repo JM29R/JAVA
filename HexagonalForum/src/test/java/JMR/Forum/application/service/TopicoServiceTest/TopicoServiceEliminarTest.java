@@ -1,23 +1,27 @@
 package JMR.Forum.application.service.TopicoServiceTest;
 
 
-import JMR.Forum.Infrastructure.Dtos.Request.UsuarioRequest;
-import JMR.Forum.Infrastructure.persistence.Topico.Mapper.TopicoDTOMapper;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import java.util.Optional;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
+import static org.mockito.Mockito.*;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import JMR.Forum.application.service.TopicoService;
 import JMR.Forum.domain.model.Topico;
 import JMR.Forum.domain.model.Usuario.Usuario;
+import JMR.Forum.domain.model.Usuario.Roles;
 import JMR.Forum.domain.repository.TopicoRepository;
 import JMR.Forum.domain.repository.UsuarioRepository;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.*;
+
 
 @ExtendWith(MockitoExtension.class)
 public class TopicoServiceEliminarTest {
@@ -25,8 +29,6 @@ public class TopicoServiceEliminarTest {
     @Mock
     private TopicoRepository topicoRepository;
 
-    @Mock
-    private TopicoDTOMapper topicoMapper;
 
     @Mock
     private UsuarioRepository usuarioRepository;
@@ -34,21 +36,29 @@ public class TopicoServiceEliminarTest {
     @InjectMocks
     private TopicoService topicoService;
 
+    private void mockSecurityContext(String username) {
+        Authentication auth = Mockito.mock(Authentication.class);
+        when(auth.getName()).thenReturn(username);
+
+        SecurityContext securityContext = Mockito.mock(SecurityContext.class);
+        when(securityContext.getAuthentication()).thenReturn(auth);
+
+        SecurityContextHolder.setContext(securityContext);
+    }
+
     @Test
     void deberiaEliminarTopicoSiEsAutor() {
 
-        // ARRANGE
         Long id = 1L;
 
         Usuario usuario = Usuario.builder()
                 .id(1L)
                 .nombre("juan")
+                .rol(Roles.ROLE_USER)
                 .build();
 
         Topico topico = new Topico();
         topico.setAutor(usuario);
-
-        UsuarioRequest request = new UsuarioRequest("juan","123456");
 
         when(topicoRepository.buscarPorId(id))
                 .thenReturn(Optional.of(topico));
@@ -56,27 +66,22 @@ public class TopicoServiceEliminarTest {
         when(usuarioRepository.findByNombre("juan"))
                 .thenReturn(Optional.of(usuario));
 
-        // ACT
-        topicoService.eliminar(id, request);
+        mockSecurityContext("juan");
 
-        // ASSERT
+        topicoService.eliminar(id);
+
         verify(topicoRepository).eliminar(id);
     }
 
     @Test
     void deberiaLanzarErrorSiTopicoNoExiste() {
 
-        Long id = 1L;
-        UsuarioRequest request = new UsuarioRequest("juan","123456");
-
-        when(topicoRepository.buscarPorId(id))
+        when(topicoRepository.buscarPorId(anyLong()))
                 .thenReturn(Optional.empty());
 
         assertThrows(RuntimeException.class, () -> {
-            topicoService.eliminar(id, request);
+            topicoService.eliminar(1L);
         });
-
-        verify(topicoRepository, never()).eliminar(any());
     }
 
     @Test
@@ -84,18 +89,11 @@ public class TopicoServiceEliminarTest {
 
         Long id = 1L;
 
-        Topico topico = new Topico();
-
-        UsuarioRequest request = new UsuarioRequest("juan","123456");
-
         when(topicoRepository.buscarPorId(id))
-                .thenReturn(Optional.of(topico));
-
-        when(usuarioRepository.findByNombre("juan"))
                 .thenReturn(Optional.empty());
 
         assertThrows(RuntimeException.class, () -> {
-            topicoService.eliminar(id, request);
+            topicoService.eliminar(id);
         });
 
         verify(topicoRepository, never()).eliminar(any());
@@ -109,17 +107,17 @@ public class TopicoServiceEliminarTest {
         Usuario autor = Usuario.builder()
                 .id(1L)
                 .nombre("juan")
+                .rol(Roles.ROLE_USER)
                 .build();
 
         Usuario otro = Usuario.builder()
                 .id(2L)
                 .nombre("pedro")
+                .rol(Roles.ROLE_USER)
                 .build();
 
         Topico topico = new Topico();
         topico.setAutor(autor);
-
-        UsuarioRequest request = new UsuarioRequest("pedro","123456");
 
         when(topicoRepository.buscarPorId(id))
                 .thenReturn(Optional.of(topico));
@@ -127,8 +125,10 @@ public class TopicoServiceEliminarTest {
         when(usuarioRepository.findByNombre("pedro"))
                 .thenReturn(Optional.of(otro));
 
+        mockSecurityContext("pedro");
+
         assertThrows(RuntimeException.class, () -> {
-            topicoService.eliminar(id, request);
+            topicoService.eliminar(id);
         });
 
         verify(topicoRepository, never()).eliminar(any());

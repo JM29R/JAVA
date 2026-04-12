@@ -1,6 +1,6 @@
 package JMR.Forum.application.service;
 
-import JMR.Forum.Infrastructure.Dtos.Request.UsuarioRequest;
+import JMR.Forum.Infrastructure.Dtos.Request.UsuarioLoginRequest;
 import JMR.Forum.Infrastructure.Dtos.Response.JWTResponse;
 import JMR.Forum.Infrastructure.Security.JwtService;
 import JMR.Forum.domain.model.Usuario.Usuario;
@@ -21,12 +21,9 @@ public class AuthService {
     private final UsuarioRepository usuarioRepository;
     private final JwtService jwtService;
 
-    public JWTResponse login(UsuarioRequest request) {
-        Usuario user = usuarioRepository.findByNombre(request.nombre())
-                .orElseThrow(()-> new RuntimeException("Usuario no encontrado"));
-        Long iduser = user.getId();
-        try {
+    public JWTResponse login(UsuarioLoginRequest request) {
 
+        try {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
                             request.nombre(),
@@ -34,21 +31,20 @@ public class AuthService {
                     )
             );
 
-
             SecurityContextHolder.getContext().setAuthentication(authentication);
-
-
-            Usuario usuario = usuarioRepository.findByNombre(request.nombre())
-                    .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-
-
-            String token = jwtService.generateToken(usuario.getNombre(), usuario.getRol().name());
-
-            return new JWTResponse(token,iduser);
-
 
         } catch (BadCredentialsException e) {
             throw new RuntimeException("Email o contraseña incorrectos");
         }
+
+        Usuario usuario = usuarioRepository.findByNombre(request.nombre())
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        String token = jwtService.generateToken(
+                usuario.getNombre(),
+                usuario.getRol().name()
+        );
+
+        return new JWTResponse(token, usuario.getId());
     }
 }

@@ -1,7 +1,7 @@
 package JMR.Forum.Infrastructure.controller;
 
 
-import JMR.Forum.Infrastructure.Dtos.Request.UsuarioRequest;
+import JMR.Forum.Infrastructure.Dtos.Request.UsuarioLoginRequest;
 import JMR.Forum.Infrastructure.Dtos.Response.UsuarioResponse;
 import JMR.Forum.application.service.UsuarioService;
 import lombok.RequiredArgsConstructor;
@@ -21,14 +21,21 @@ public class UsuarioController {
 
     @Transactional
     @PostMapping("/register")
-    public ResponseEntity<UsuarioResponse> RegistrarUsuario(@RequestBody UsuarioRequest usuarioRequest){
-        return ResponseEntity.ok(usuarioService.crearUsuario(usuarioRequest));
+    public ResponseEntity<UsuarioResponse> RegistrarUsuario(@RequestBody UsuarioLoginRequest usuarioRequest){
+
+        try {
+            return ResponseEntity.ok(usuarioService.crearUsuario(usuarioRequest));
+        }
+        catch (IllegalArgumentException e){
+            return ResponseEntity.badRequest().build();
+        }
+
     }
 
     @PreAuthorize("isAuthenticated()")
     @Transactional
     @PutMapping("/editar/{id}")
-    public ResponseEntity<UsuarioResponse> editarUsuario(@PathVariable Long id,@RequestBody UsuarioRequest usuarioRequest){
+    public ResponseEntity<UsuarioResponse> editarUsuario(@PathVariable Long id,@RequestBody UsuarioLoginRequest usuarioRequest){
         return ResponseEntity.ok(usuarioService.editarUsuario(id,usuarioRequest));
     }
 

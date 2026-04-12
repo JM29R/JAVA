@@ -1,6 +1,6 @@
 package JMR.Forum.infrastructure.Controller.UsuarioControllerTest;
 
-import JMR.Forum.Infrastructure.Dtos.Request.UsuarioRequest;
+import JMR.Forum.Infrastructure.Dtos.Request.UsuarioLoginRequest;
 import JMR.Forum.Infrastructure.Dtos.Response.UsuarioResponse;
 import JMR.Forum.Infrastructure.Security.JwtService;
 import JMR.Forum.Infrastructure.controller.UsuarioController;
@@ -40,7 +40,7 @@ class UsuarioControllerEditarTest {
     @Test
     void deberiaEditarUsuario() throws Exception {
 
-        UsuarioRequest request = new UsuarioRequest("juanEditado", "1234");
+        UsuarioLoginRequest request = new UsuarioLoginRequest("juanEditado", "1234");
 
         UsuarioResponse response = new UsuarioResponse(1L, "juanEditado",  "ROLE_USER",true);
 

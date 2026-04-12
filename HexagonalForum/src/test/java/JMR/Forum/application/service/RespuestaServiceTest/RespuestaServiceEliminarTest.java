@@ -10,11 +10,16 @@ import JMR.Forum.domain.model.Usuario.Roles;
 import JMR.Forum.domain.model.Usuario.Usuario;
 import JMR.Forum.domain.repository.RespuestaRepository;
 import JMR.Forum.domain.repository.UsuarioRepository;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.Optional;
 
@@ -34,35 +39,44 @@ public class RespuestaServiceEliminarTest {
     @Mock
     private UsuarioRepository usuarioRepository;
 
-@Test
+    private void mockSecurityContext(String username) {
+        Authentication auth = Mockito.mock(Authentication.class);
+        when(auth.getName()).thenReturn(username);
+
+        SecurityContext context = Mockito.mock(SecurityContext.class);
+        when(context.getAuthentication()).thenReturn(auth);
+
+        SecurityContextHolder.setContext(context);
+    }
+
+    @Test
     void deberiaEliminarRespuestaCorrectamente() {
-    Long id = 1L;
+        Long id = 1L;
 
-    Usuario autor = Usuario.builder()
-            .id(1L)
-            .rol(Roles.ROLE_USER)
-            .build();
+        Usuario autor = Usuario.builder()
+                .id(1L)
+                .rol(Roles.ROLE_USER)
+                .build();
 
-    Topico topico = new Topico();
-    topico.setAutor(Usuario.builder().id(99L).build());
+        Topico topico = new Topico();
+        topico.setAutor(Usuario.builder().id(99L).build());
 
-    Respuesta respuesta = new Respuesta();
-    respuesta.setAutor(autor);
-    respuesta.setTopico(topico);
+        Respuesta respuesta = new Respuesta();
+        respuesta.setAutor(autor);
+        respuesta.setTopico(topico);
 
-    UsuarioRequest request = new UsuarioRequest("juan","123456");
+        when(respuestaRepository.buscarPorId(id))
+                .thenReturn(Optional.of(respuesta));
 
-    when(respuestaRepository.buscarPorId(id))
-            .thenReturn(Optional.of(respuesta));
+        when(usuarioRepository.findByNombre("juan"))
+                .thenReturn(Optional.of(autor));
 
-    when(usuarioRepository.findByNombre("juan"))
-            .thenReturn(Optional.of(autor));
+        mockSecurityContext("juan");
 
-    respuestaService.eliminar(id, request);
+        respuestaService.eliminar(id);
 
-    verify(respuestaRepository).borrar(respuesta);
-
-}
+        verify(respuestaRepository).borrar(respuesta);
+    }
 
     @Test
     void deberiaEliminarSiEsAdmin() {
@@ -79,10 +93,12 @@ public class RespuestaServiceEliminarTest {
         when(respuestaRepository.buscarPorId(any()))
                 .thenReturn(Optional.of(respuesta));
 
-        when(usuarioRepository.findByNombre(any()))
+        when(usuarioRepository.findByNombre("admin"))
                 .thenReturn(Optional.of(admin));
 
-        respuestaService.eliminar(1L, new UsuarioRequest("admin","admin"));
+        mockSecurityContext("admin");
+
+        respuestaService.eliminar(1L);
 
         verify(respuestaRepository).borrar(respuesta);
     }
@@ -105,10 +121,12 @@ public class RespuestaServiceEliminarTest {
         when(respuestaRepository.buscarPorId(any()))
                 .thenReturn(Optional.of(respuesta));
 
-        when(usuarioRepository.findByNombre(any()))
+        when(usuarioRepository.findByNombre("user"))
                 .thenReturn(Optional.of(user));
 
-        respuestaService.eliminar(1L, new UsuarioRequest("user","user"));
+        mockSecurityContext("user");
+
+        respuestaService.eliminar(1L);
 
         verify(respuestaRepository).borrar(respuesta);
     }
@@ -131,14 +149,22 @@ public class RespuestaServiceEliminarTest {
         when(respuestaRepository.buscarPorId(any()))
                 .thenReturn(Optional.of(respuesta));
 
-        when(usuarioRepository.findByNombre(any()))
+        when(usuarioRepository.findByNombre("user"))
                 .thenReturn(Optional.of(user));
 
+        mockSecurityContext("user");
+
         assertThrows(RuntimeException.class, () -> {
-            respuestaService.eliminar(1L, new UsuarioRequest("user","user"));
+            respuestaService.eliminar(1L);
         });
 
         verify(respuestaRepository, never()).borrar(any());
     }
 
+
+
+    @AfterEach
+    void clearContext() {
+        SecurityContextHolder.clearContext();
+    }
 }

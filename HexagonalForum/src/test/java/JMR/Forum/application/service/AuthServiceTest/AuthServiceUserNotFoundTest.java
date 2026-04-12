@@ -1,8 +1,7 @@
 package JMR.Forum.application.service.AuthServiceTest;
 
 
-import JMR.Forum.Infrastructure.Dtos.Request.UsuarioRequest;
-import JMR.Forum.Infrastructure.Security.JwtService;
+import JMR.Forum.Infrastructure.Dtos.Request.UsuarioLoginRequest;
 import JMR.Forum.application.service.AuthService;
 import JMR.Forum.domain.repository.UsuarioRepository;
 import org.junit.jupiter.api.Test;
@@ -37,7 +36,7 @@ public class AuthServiceUserNotFoundTest {
     @Test
     void deberiaLanzarErrorSiUsuarioNoExiste() {
 
-        UsuarioRequest request = new UsuarioRequest("juan", "1234");
+        UsuarioLoginRequest request = new UsuarioLoginRequest("juan", "1234");
 
         Authentication authentication = mock(Authentication.class);
 

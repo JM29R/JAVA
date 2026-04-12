@@ -1,7 +1,7 @@
 package JMR.Forum.application.service.UsuarioServiceTest;
 
 
-import JMR.Forum.Infrastructure.Dtos.Request.UsuarioRequest;
+import JMR.Forum.Infrastructure.Dtos.Request.UsuarioLoginRequest;
 import JMR.Forum.Infrastructure.Dtos.Response.UsuarioResponse;
 import JMR.Forum.Infrastructure.persistence.Usuario.Mapper.UsuarioDTOMapper;
 import JMR.Forum.application.service.UsuarioService;
@@ -39,7 +39,7 @@ public class UsuarioServiceCrearUsuarioTest {
     @Test
     void deberiaCrearUsuarioCorrectamente() {
 
-        UsuarioRequest request = new UsuarioRequest("juan", "1234");
+        UsuarioLoginRequest request = new UsuarioLoginRequest("juan", "1234");
 
         Usuario usuarioGuardado = new Usuario();
         usuarioGuardado.setNombre("juan");

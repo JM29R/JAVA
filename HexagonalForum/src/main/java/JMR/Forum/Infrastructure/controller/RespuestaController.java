@@ -47,9 +47,9 @@ public class RespuestaController {
     @PreAuthorize("isAuthenticated()")
     @DeleteMapping("/{id}")
     @Transactional
-    public ResponseEntity eliminarRespuesta(@PathVariable Long id,@RequestBody UsuarioRequest usuarioRequest) {
+    public ResponseEntity eliminarRespuesta(@PathVariable Long id) {
 
-        respuestaService.eliminar(id,usuarioRequest);
+        respuestaService.eliminar(id);
         return ResponseEntity.noContent().build();
     }
 

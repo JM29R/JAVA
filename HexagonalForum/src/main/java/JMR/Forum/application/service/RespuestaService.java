@@ -12,6 +12,7 @@ import JMR.Forum.domain.repository.RespuestaRepository;
 import JMR.Forum.domain.repository.TopicoRepository;
 import JMR.Forum.domain.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
@@ -66,11 +67,14 @@ public class RespuestaService {
 
     }
 
-    public void eliminar(long id, UsuarioRequest usuarioRequest) {
+    public void eliminar(long id) {
         Respuesta respuesta = respuestaRepository.buscarPorId(id)
                 .orElseThrow(() -> new RuntimeException("Respuesta no encontrada"));
 
-        Usuario user = usuarioRepository.findByNombre(usuarioRequest.nombre())
+        String username = SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getName();
+        Usuario user = usuarioRepository.findByNombre(username)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
         if (!puedeEliminar(user, respuesta)) {

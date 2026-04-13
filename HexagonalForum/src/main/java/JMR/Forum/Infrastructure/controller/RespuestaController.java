@@ -2,6 +2,7 @@ package JMR.Forum.Infrastructure.controller;
 
 
 import JMR.Forum.Infrastructure.Dtos.Request.RespuestaRequest;
+import JMR.Forum.Infrastructure.Dtos.Request.RespuestaRequestEdit;
 import JMR.Forum.Infrastructure.Dtos.Request.UsuarioRequest;
 import JMR.Forum.Infrastructure.Dtos.Response.RespuestaResponse;
 import JMR.Forum.application.service.RespuestaService;
@@ -26,6 +27,15 @@ public class RespuestaController {
     public ResponseEntity<RespuestaResponse> crearRespuesta(@RequestBody RespuestaRequest request) {
         RespuestaResponse response = respuestaService.crear(request);
         return ResponseEntity.ok(response);
+
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping("/{id}")
+    @Transactional
+    public ResponseEntity<RespuestaResponse> editarRespuesta(@PathVariable Long id ,@RequestBody RespuestaRequestEdit respuestaRequest) {
+
+        return ResponseEntity.ok(respuestaService.editarRespuesta(respuestaRequest,id));
 
     }
 

@@ -2,6 +2,7 @@ package JMR.Forum.Infrastructure.controller;
 
 
 import JMR.Forum.Infrastructure.Dtos.Request.TopicoRequest;
+import JMR.Forum.Infrastructure.Dtos.Request.TopicoRequestEdit;
 import JMR.Forum.Infrastructure.Dtos.Request.UsuarioRequest;
 import JMR.Forum.Infrastructure.Dtos.Response.TopicoResponse;
 import JMR.Forum.application.service.TopicoService;
@@ -27,6 +28,14 @@ public class TopicoController {
         TopicoResponse response = topicoService.crearTopico(topicoDTO);
         return ResponseEntity.ok(response);
 
+    }
+
+    @Transactional
+    @PostMapping("/{id}")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<TopicoResponse> actualizarTopico(@PathVariable Long id,@RequestBody TopicoRequestEdit topicoDTO) {
+
+        return ResponseEntity.ok(topicoService.editarTopico(topicoDTO, id));
     }
 
     @PreAuthorize("isAuthenticated()")

@@ -1,6 +1,7 @@
 package JMR.Forum.application.service;
 
 import JMR.Forum.Infrastructure.Dtos.Request.RespuestaRequest;
+import JMR.Forum.Infrastructure.Dtos.Request.RespuestaRequestEdit;
 import JMR.Forum.Infrastructure.Dtos.Request.UsuarioRequest;
 import JMR.Forum.Infrastructure.Dtos.Response.RespuestaResponse;
 import JMR.Forum.Infrastructure.persistence.Respuesta.Mapper.RespuestaDTOMapper;
@@ -14,6 +15,8 @@ import JMR.Forum.domain.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -34,21 +37,45 @@ public class RespuestaService {
                 || user.getId().equals(respuesta.getTopico().getAutor().getId());//si es el autor del topico
     }
 
+    private boolean puedeEditar(Usuario user, Respuesta respuesta) {
+        return user.getId().equals(respuesta.getAutor().getId());
+    }
 
 
-    public RespuestaResponse crear(RespuestaRequest request){
+    public RespuestaResponse crear(RespuestaRequest request) {
         Usuario usuario = usuarioRepository.buscarPorId(request.autorId())
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
         Topico topico = topicoRepository.buscarPorId(request.topicoId())
                 .orElseThrow(() -> new RuntimeException("Topico no encontrado"));
 
-        Respuesta respuesta = respuestaDTOMapper.toDomain(request,usuario,topico);
+        Respuesta respuesta = respuestaDTOMapper.toDomain(request, usuario, topico);
 
         Respuesta res = respuestaRepository.guardar(respuesta);
         return respuestaDTOMapper.toResponse(res);
 
     }
+
+    public RespuestaResponse editarRespuesta(RespuestaRequestEdit respuestaRequest,Long respuestaId) {
+        Respuesta respuesta = respuestaRepository.buscarPorId(respuestaId)
+                .orElseThrow(() -> new RuntimeException("Respuesta no encontrada"));
+
+        String username = SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getName();
+        Usuario user = usuarioRepository.findByNombre(username)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        if(!puedeEditar(user, respuesta)){
+            throw new RuntimeException("No tienes permiso para editar esta respuesta");
+        }
+
+        respuesta.setContenido(respuestaRequest.contenido());
+        respuesta.setFechaCreacion(LocalDateTime.now());
+
+        return respuestaDTOMapper.toResponse(respuestaRepository.guardar(respuesta));
+    }
+
 
     public List<RespuestaResponse> listarPorTopico(Long idTopico) {
 
@@ -83,5 +110,4 @@ public class RespuestaService {
 
         respuestaRepository.borrar(respuesta);
     }
-
 }

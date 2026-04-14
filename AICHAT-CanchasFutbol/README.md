@@ -1,80 +1,175 @@
-# AI Chat – Sistema de Reservas de Canchas vía WhatsApp
+# 🤖 AI Chat - Canchas de Fútbol
 
-**AI Chat** es un sistema inteligente desarrollado en **Java Spring Boot** que permite a los usuarios **reservar, cancelar, modificar y consultar canchas deportivas** automáticamente a través de WhatsApp, utilizando la **API de Groq** en su capa gratuita para procesar intenciones y generar respuestas inteligentes.
+Aplicación web que integra inteligencia artificial en un sistema de gestión de reservas de canchas de fútbol.
 
-## Tecnologías
+Permite a los usuarios interactuar con un chat inteligente capaz de responder consultas, asistir en reservas y mejorar la experiencia del usuario mediante el uso de modelos de IA.
 
-- Java 21  
-- Spring Boot 3.5.10  
-- Spring Web / Spring Data JPA / Spring Validation  
-- MySQL como base de datos  
-- Flyway para versionado de esquemas de base de datos  
-- Lombok para reducir código boilerplate  
-- Spring AI (Groq y OpenAI) para procesamiento de lenguaje natural  
-- JUnit / Spring Boot Test para pruebas
+FrontEnd que simula ser un chat estilo META para testear funcionalidad simulando estar conectado a un chat real.
 
-## Funcionalidades
+---
 
-1. **Reservar canchas automáticamente**: los usuarios envían un mensaje por WhatsApp indicando cancha, fecha y hora; el sistema interpreta la intención y genera la reserva.  
-2. **Cancelar reservas**: permite cancelar reservas existentes mediante conversación.  
-3. **Modificar reservas**: cambiar fecha, hora o cancha de reservas previamente creadas.  
-4. **Consultar reservas**: los usuarios pueden consultar el estado de sus reservas por WhatsApp.  
-5. **Integración con Groq**: utiliza la capa gratuita de Groq para procesar intenciones y cambia automáticamente entre modelos si se alcanza el límite de llamadas gratuitas.
+## 🚀 Objetivo del proyecto
 
-## Estructura del Proyecto
+Proyecto personal enfocado en explorar la integración de **Inteligencia Artificial en aplicaciones backend con Spring Boot**.
 
+Principales objetivos:
 
+* Integrar servicios de IA usando **Spring AI**
+* Consumir APIs externas (Groq)
+* Implementar autenticación segura con **JWT**
+* Construir una aplicación real combinando negocio + IA
 
-* aichat/
-* -src/
-* -- main/
-* --- java/
-* ---- jmr/aichat/
-* ----- CANCHAS/ # Entidad JPA.
-* -----  CONTROLLER/ # Endpoints REST (ej. /chat)
-* -----  Inteligencia Artifical/ # RECORDS para AI
-* -----  RESERVAS/ # Entidad JPA.
-* -----  SERVICE/ # Lógica de negocio y comunicación con Groq
-* -----  resources/
-* -----  application.properties # Configuración DB y API Keys
-* ----- db/migration # Scripts Flyway para inicializar tablas
-* -pom.xml
-* -README.md
+---
 
+## 🧠 Qué aprendí
 
-## Uso del Chat
-Enviar un mensaje por WhatsApp y el sistema lo interpretara como:
-Intencion: reservar
-Cancha: 3
-Fecha: 2026-02-20
-Hora: 18:00
+* Integración de **Spring AI** con proveedores externos
+* Uso de APIs de IA (Groq) en backend Java
+* Manejo de prompts y respuestas en aplicaciones reales
+* Implementación de seguridad con **JWT**
+* Despliegue con **Docker + Render**
+* Conexión a bases de datos externas (Aiven)
 
-El sistema procesará la intención, confirmará la reserva y responderá automáticamente.
+---
 
-Funciona también para **cancelar, modificar o consultar reservas**.
+## 🛠️ Tecnologías utilizadas
 
-## Dependencias Clave
+### Backend
 
-- `spring-boot-starter-web` – para exponer endpoints REST  
-- `spring-boot-starter-data-jpa` – para persistencia de datos  
-- `spring-boot-starter-validation` – para validar inputs  
-- `mysql-connector-j` – conexión con MySQL  
-- `flyway-core` – migraciones de base de datos  
-- `spring-ai-starter-model-openai` – integración con modelos de lenguaje (Groq/OpenAI)  
-- `lombok` – reducción de código boilerplate  
+* Java 21
+* Spring Boot 3
+* Spring Web
+* Spring Data JPA
+* Spring AI
 
-## Próximas Mejoras
+### Inteligencia Artificial
 
-- Integración completa con WhatsApp Business API o Twilio.  
-- Registro de logs de conversación para entrenamiento de modelos.  
-- Manejo de múltiples usuarios y roles (administrador, cliente).  
-- Persistencia de historiales de chat y reservas.  
+* API de Groq (modelo compatible con OpenAI)
 
-## Licencia
+### Seguridad
 
-Este proyecto es **open source** bajo licencia MIT.
+* Spring Security
+* JWT (Auth0)
 
-## DEPLOY EN RENDER: https://aichat-latest-b1mv.onrender.com/
+### Base de datos
+
+* MySQL
+* Flyway (migraciones)
+* Aiven (hosting DB)
+
+### Frontend
+
+* Thymeleaf
+
+### DevOps
+
+* Docker
+* Render (deploy)
+
+### Calidad
+
+* SonarQube
+
+---
+
+## ⚙️ Funcionalidades
+
+* Registro y login de usuarios.
+* Autenticación con JWT.
+* Gestión de:
+
+  * Canchas.
+  * Reservas.
+  * Usuarios.
+* Chat con IA:
+
+  * Respuestas automáticas a consultas.
+  * Asistencia para reservas.
+  * Persistencia de mensajes para obtener mejor contexto.
+* Integración con API externa de IA.
+* Persistencia de turnos, usuarios y mensajes.
+* Panel ADMIN donde ver turnos, canchas y mensajes con sus intenciones.
+
+---
+
+## 🏗️ Arquitectura
+
+El proyecto sigue una arquitectura **monolítica en capas**, organizada de la siguiente manera:
+
+```id="arch123"
+Controller
+ ├── Services
+ │    ├── Entities
+ │    ├── Repositories
+ │
+ ├── Security
+ ├── AI (Chat)
+ ├── Views (Thymeleaf)
+```
+
+### 🔍 Nota
+
+Si bien no sigue una arquitectura avanzada como hexagonal, este proyecto fue clave para entender:
+
+* Flujo completo de una aplicación real
+* Integración de múltiples tecnologías
+* Comunicación con servicios externos (IA)
+
+---
+
+## 🐳 Deploy
+
+La aplicación está desplegada utilizando:
+
+* Docker (contenedorización)
+* Render (hosting)
+* Aiven (base de datos)
+
+👉 *(Podés agregar acá tu link de deploy)*
+
+---
+
+## 🔐 Variables de entorno
+
+```properties id="env123"
+spring.datasource.url=${SPRING_DATASOURCE_URL}
+spring.datasource.username=${SPRING_DATASOURCE_USERNAME}
+spring.datasource.password=${SPRING_DATASOURCE_PASSWORD}
+
+spring.ai.openai.api-key=${GROQ_API_KEY}
+
+api.security.token.secret=${JWT_SECRET}
+
+server.port=${PORT:8080}
+```
+
+---
+
+## 🧪 Testing
+
+* Tests básicos
+* Análisis de calidad con **SonarQube**
+
+---
+
+## 📌 Mejoras futuras
+
+* Implementar arquitectura más desacoplada (Hexagonal / Clean)
+* Mejorar manejo de prompts de IA
+* Agregar historial de conversaciones
+* Implementar frontend moderno (React)
+* Tests unitarios y de integración más completos
+* Rate limiting para la API de IA
+
+---
+
+## 👨‍💻 Autor
+
+**Juan Manuel Rios**
+
+Desarrollador backend enfocado en Java, arquitectura de software e integración con IA.
+
+---
 
 
 

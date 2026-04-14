@@ -11,14 +11,9 @@ public class TopicoDTOMapper {
 
     public Topico toDomain(TopicoRequest dto) {
 
-        Usuario usuario = Usuario.builder()
-                .id(dto.idAutor())
-                .build();
-
         return Topico.builder()
                 .titulo(dto.titulo())
                 .mensaje(dto.mensaje())
-                .autor(usuario)
                 .build();
     }
 

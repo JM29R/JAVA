@@ -9,13 +9,20 @@ import JMR.Forum.domain.model.Usuario.Roles;
 import JMR.Forum.domain.model.Usuario.Usuario;
 import JMR.Forum.domain.repository.TopicoRepository;
 import JMR.Forum.domain.repository.UsuarioRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.test.context.support.WithMockUser;
 
 import static org.junit.jupiter.api.Assertions.*;
+
+import java.util.List;
 import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.verify;
@@ -37,11 +44,22 @@ public class TopicoServiceCrearTest {
     @InjectMocks
     private TopicoService topicoService;
 
+    private static final String USERNAME = "juan";
+
+    @BeforeEach
+    void setUp() {
+
+        UsernamePasswordAuthenticationToken authentication =
+                new UsernamePasswordAuthenticationToken(USERNAME, null,
+                        List.of(new SimpleGrantedAuthority("ROLE_USER")));
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+    }
+
     @Test
     void deberiaCrearTopicoCorrectamente() {
 
 
-        TopicoRequest request = new TopicoRequest("titulo", "mensaje", 1L);
+        TopicoRequest request = new TopicoRequest("titulo", "mensaje");
 
         Usuario usuario = Usuario.builder()
                 .id(1L)
@@ -53,9 +71,11 @@ public class TopicoServiceCrearTest {
         Topico topico = new Topico();
         Topico topicoGuardado = new Topico();
 
+        topico.setAutor(usuario);
+
         TopicoResponse response = new TopicoResponse(1L, "titulo", "mensaje",1L);
 
-        when(usuarioRepository.buscarPorId(1L))
+        when(usuarioRepository.findByNombre("juan"))
                 .thenReturn(Optional.of(usuario));
 
         when(topicoMapper.toDomain(request))
@@ -75,7 +95,7 @@ public class TopicoServiceCrearTest {
         assertEquals("titulo", resultado.titulo());
 
 
-        verify(usuarioRepository).buscarPorId(1L);
+        verify(usuarioRepository).findByNombre("juan");
         verify(topicoRepository).guardar(topico);
         verify(topicoMapper).toResponse(topicoGuardado);
     }

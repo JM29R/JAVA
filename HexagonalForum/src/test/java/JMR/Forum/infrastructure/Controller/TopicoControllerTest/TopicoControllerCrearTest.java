@@ -42,7 +42,7 @@ class TopicoControllerCrearTest {
     @Test
     void deberiaCrearTopicoCorrectamente() throws Exception {
 
-        TopicoRequest request = new TopicoRequest("titulo", "mensaje", 1L);
+        TopicoRequest request = new TopicoRequest("titulo", "mensaje");
 
         TopicoResponse response = new TopicoResponse(
                 1L,

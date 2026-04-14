@@ -41,11 +41,15 @@ public class TopicoService {
 
     public TopicoResponse crearTopico(TopicoRequest request) {
 
-        Usuario usuario = usuarioRepository.buscarPorId(request.idAutor())
+        String username = SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getName();
+
+        Usuario user = usuarioRepository.findByNombre(username)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
         Topico topico = topicoMapper.toDomain(request);
-        topico.setAutor(usuario);
+        topico.setAutor(user);
         Topico guardado = topicoRepository.guardar(topico);
 
         return topicoMapper.toResponse(guardado);

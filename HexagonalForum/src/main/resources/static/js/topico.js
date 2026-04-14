@@ -89,7 +89,7 @@ function renderRespuestas(respuestas) {
             <div class="respuesta-contenido">
                 <p class="mb-2">${escapeHtml(r.contenido)}</p>
                 <small class="text-muted">
-                    <i class="fas fa-user"></i> Autor ID: ${r.idAutor ?? 'Desconocido'} |
+                    <i class="fas fa-user"></i> Autor: ${escapeHtml(r.autorNombre) || 'Desconocido'} |
                     <i class="fas fa-calendar"></i> ${formatFecha(r.fechaCreacion)}
                 </small>
             </div>

@@ -132,6 +132,7 @@ La aplicación está desplegada utilizando:
 * Docker (contenedorización)
 * DockerHub (imagen)
 * Railway (hosting)
+* Puedes probar el modo admin con: user=admin password=admin
 
 👉 https://hexagonal-forum-production.up.railway.app/view/login
 

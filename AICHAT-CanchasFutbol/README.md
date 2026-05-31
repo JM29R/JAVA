@@ -125,7 +125,7 @@ La aplicación está desplegada utilizando:
 * Render (hosting)
 * Aiven (base de datos)
 
-👉 *(Podés agregar acá tu link de deploy)*
+👉 https://aichat-latest-b1mv.onrender.com/
 
 ---
 

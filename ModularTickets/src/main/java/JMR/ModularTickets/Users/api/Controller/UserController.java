@@ -19,7 +19,7 @@ public class UserController {
     private final UserService service;
 
     @Transactional
-    @PostMapping("/create")
+    @PostMapping("/register")
     public ResponseEntity<UserResponse> create(@RequestBody UserRequest userRequest){
         return ResponseEntity.ok(service.create(userRequest));
 

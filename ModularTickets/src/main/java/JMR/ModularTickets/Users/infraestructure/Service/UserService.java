@@ -26,7 +26,7 @@ public class UserService {
         if(userRequest == null){return null;}
 
         users user= DTOmapper.ToDomain(userRequest);
-        user.setRol(Roles.ROLE_USER);
+        user.setRol(Roles.USER);
         users saved = userRepository.save(user);
         return DTOmapper.ToResponse(saved);
 

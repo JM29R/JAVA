@@ -1,6 +1,6 @@
 package JMR.ModularTickets.auth.api.Controller;
 
-import JMR.ModularTickets.auth.infraestructure.Service.AuthService;
+import JMR.ModularTickets.auth.domain.Service.AuthService;
 import JMR.ModularTickets.auth.api.Dtos.AuthRequest;
 import JMR.ModularTickets.auth.api.Dtos.AuthResponse;
 import lombok.AllArgsConstructor;

@@ -1,4 +1,4 @@
-package JMR.ModularTickets.auth.infraestructure;
+package JMR.ModularTickets.auth.infraestructure.security;
 
 import JMR.ModularTickets.Users.domain.Model.users;
 import JMR.ModularTickets.Users.domain.repository.UserRepository;

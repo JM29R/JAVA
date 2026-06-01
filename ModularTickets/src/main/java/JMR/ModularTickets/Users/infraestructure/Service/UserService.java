@@ -6,8 +6,10 @@ import JMR.ModularTickets.Users.domain.Model.Roles;
 import JMR.ModularTickets.Users.domain.Model.users;
 import JMR.ModularTickets.Users.domain.repository.UserRepository;
 import JMR.ModularTickets.Users.infraestructure.persistence.Mapper.UserDTOMapper;
+import JMR.ModularTickets.auth.domain.PasswordHasher;
 import lombok.AllArgsConstructor;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -21,12 +23,16 @@ public class UserService {
 
     private final UserDTOMapper DTOmapper;
 
+    private final PasswordHasher hasher;
+
 
     public UserResponse create(UserRequest userRequest) {
         if(userRequest == null){return null;}
 
         users user= DTOmapper.ToDomain(userRequest);
         user.setRol(Roles.USER);
+        String pass = hasher.encode(user.getPassword());
+        user.setPassword(pass);
         users saved = userRepository.save(user);
         return DTOmapper.ToResponse(saved);
 

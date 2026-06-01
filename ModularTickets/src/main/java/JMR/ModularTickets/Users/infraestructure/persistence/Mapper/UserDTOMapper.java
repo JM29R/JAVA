@@ -7,14 +7,15 @@ import JMR.ModularTickets.Users.domain.Model.users;
 import JMR.ModularTickets.Users.domain.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
-
-import java.security.PrivateKey;
+;
 
 @AllArgsConstructor
 @Component
 public class UserDTOMapper {
 
     private final UserRepository userRepository;
+
+
 
     public users ToDomain(UserRequest userRequest) {
         if (userRequest == null) { return null; }

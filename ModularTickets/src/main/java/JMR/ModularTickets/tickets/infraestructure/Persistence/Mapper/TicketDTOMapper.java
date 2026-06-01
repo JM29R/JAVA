@@ -9,11 +9,11 @@ import org.springframework.stereotype.Component;
 @Component
 public class TicketDTOMapper {
 
-    public Ticket toDomainDTO(TicketRequest request) {
+    public Ticket toDomainDTO(TicketRequest request, Long userId) {
 
         return Ticket.builder()
                 .ticket(request.ticket())
-                .userId(request.userID())
+                .userId(userId)
                 .build();
     }
 

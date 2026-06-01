@@ -1,4 +1,4 @@
-package JMR.ModularTickets.auth.infraestructure;
+package JMR.ModularTickets.auth.infraestructure.security;
 
 
 import lombok.RequiredArgsConstructor;
@@ -15,6 +15,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -22,6 +23,8 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
     private final CustomUserDetailsService customUserDetailsService;
+
+    private final JwtAuthenticationfilter jwtAuthenticationfilter;
 
     @Bean
     PasswordEncoder passwordEncoder() {
@@ -49,11 +52,19 @@ public class SecurityConfig {
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
          http
                  .csrf(csrf -> csrf.disable())
+
                  .sessionManagement(config ->
                          config.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+
                  .authenticationProvider(authenticationProvider())
+
+                 .addFilterBefore(
+                         jwtAuthenticationfilter,
+                         UsernamePasswordAuthenticationFilter.class
+                 )
+
                  .authorizeHttpRequests(config ->{
-                     config.requestMatchers(HttpMethod.POST, "/").permitAll()
+                     config.requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
                              .requestMatchers(HttpMethod.POST, "/user/register").permitAll()
                              .anyRequest()
                              .authenticated();

@@ -2,6 +2,8 @@ package JMR.ModularTickets.tickets.infraestructure.Service;
 
 
 import JMR.ModularTickets.Users.domain.Model.users;
+import JMR.ModularTickets.Users.domain.repository.UserRepository;
+import JMR.ModularTickets.auth.domain.CurrentUserProvider;
 import JMR.ModularTickets.tickets.api.Dtos.TicketRequest;
 import JMR.ModularTickets.tickets.api.Dtos.TicketResponse;
 import JMR.ModularTickets.tickets.domain.Model.Ticket;
@@ -16,14 +18,25 @@ import java.util.List;
 public class TicketService {
 
     private final TicketRepository repository;
+
     private final TicketDTOMapper mapper;
 
-    private boolean isAllowed(users user){
-        return user.isActivo();
-    }
+    private final CurrentUserProvider currentUserProvider;
+
+    private final UserRepository userRepository;
+
 
     public TicketResponse create(TicketRequest ticketRequest) {
-        Ticket ticket = mapper.toDomainDTO(ticketRequest);
+
+        String username =
+                currentUserProvider.getUsername();
+
+        users user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        if(user.isActivo()){ return null;}
+
+        Ticket ticket = mapper.toDomainDTO(ticketRequest,user.getId());
         Ticket ticketSaved = repository.save(ticket);
         return mapper.ticketResponse(ticketSaved);
     }

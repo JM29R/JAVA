@@ -1,9 +1,10 @@
-package JMR.ModularTickets.auth.infraestructure.Service;
+package JMR.ModularTickets.auth.domain.Service;
 
 import JMR.ModularTickets.Users.domain.Model.users;
 import JMR.ModularTickets.Users.domain.repository.UserRepository;
 import JMR.ModularTickets.auth.api.Dtos.AuthRequest;
 import JMR.ModularTickets.auth.api.Dtos.AuthResponse;
+import JMR.ModularTickets.auth.infraestructure.jwt.JWTService;
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

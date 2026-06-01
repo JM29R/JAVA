@@ -6,6 +6,8 @@ import JMR.ModularTickets.tickets.api.Dtos.TicketResponse;
 import JMR.ModularTickets.tickets.domain.Model.Ticket;
 import JMR.ModularTickets.tickets.infraestructure.Persistence.Mapper.TicketDTOMapper;
 import JMR.ModularTickets.tickets.infraestructure.Service.TicketService;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,7 +25,7 @@ public class TicketController {
 
     @Transactional
     @PostMapping("/create")
-    public ResponseEntity<TicketResponse> createTicket(@RequestBody TicketRequest ticket) {
+    public ResponseEntity<TicketResponse> createTicket(@RequestBody @Valid TicketRequest ticket) {
 
         return ResponseEntity.ok(service.create(ticket));
 
@@ -38,7 +40,7 @@ public class TicketController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<List<TicketResponse>> listTicketsByuserId(@PathVariable Long id) {
+    public ResponseEntity<List<TicketResponse>> listTicketsByuserId(@PathVariable @Min(1) Long id) {
 
         return ResponseEntity.ok(service.findByUserId(id));
 
@@ -46,7 +48,7 @@ public class TicketController {
 
     @Transactional
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> Delete(@PathVariable Long id){
+    public ResponseEntity<Void> Delete(@PathVariable @Min(1) Long id){
 
         service.delete(id);
         return ResponseEntity.ok().build();

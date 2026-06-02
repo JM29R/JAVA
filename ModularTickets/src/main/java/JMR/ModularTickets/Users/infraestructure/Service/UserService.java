@@ -6,13 +6,10 @@ import JMR.ModularTickets.Users.domain.Model.Roles;
 import JMR.ModularTickets.Users.domain.Model.users;
 import JMR.ModularTickets.Users.domain.repository.UserRepository;
 import JMR.ModularTickets.Users.infraestructure.persistence.Mapper.UserDTOMapper;
+import JMR.ModularTickets.auth.domain.CurrentUserProvider;
 import JMR.ModularTickets.auth.domain.PasswordHasher;
 import lombok.AllArgsConstructor;
-
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
 import java.util.List;
 
 @AllArgsConstructor
@@ -24,6 +21,22 @@ public class UserService {
     private final UserDTOMapper DTOmapper;
 
     private final PasswordHasher hasher;
+
+    private final CurrentUserProvider currentUserProvider;
+
+
+    private users ActiveUser(){
+
+        String username =
+                currentUserProvider.getUsername();
+
+        users user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        if (!user.isActivo()){throw new RuntimeException("user is not active");}
+
+        return user;
+    }
+
 
 
     public UserResponse create(UserRequest userRequest) {
@@ -39,6 +52,9 @@ public class UserService {
     }
 
     public List<UserResponse> findAll() {
+
+        users user = ActiveUser();
+
         List<users> users = userRepository.listUsers();
 
         return users
@@ -48,18 +64,27 @@ public class UserService {
     }
 
     public UserResponse findById(Long id) {
+
+        users verify = ActiveUser();
+
         users user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
         return DTOmapper.ToResponse(user);
     }
 
     public UserResponse findByUsername(String username) {
+
+        users verify = ActiveUser();
+
         users user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
         return DTOmapper.ToResponse(user);
     }
 
     public UserResponse unban(Long id) {
+
+        users verify = ActiveUser();
+
         users user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
         user.setActivo(true);
@@ -68,13 +93,15 @@ public class UserService {
     }
 
     public void delete(Long id){
-        if(id ==null  || id == 0 ){return;}
+
+        users verify = ActiveUser();
+
+
 
         users user= userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
         user.setActivo(false);
 
         users deleted = userRepository.save(user);
-        return;
     }
 }

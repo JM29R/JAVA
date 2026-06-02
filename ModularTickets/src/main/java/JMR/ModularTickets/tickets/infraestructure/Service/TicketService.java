@@ -25,16 +25,21 @@ public class TicketService {
 
     private final UserRepository userRepository;
 
-
-    public TicketResponse create(TicketRequest ticketRequest) {
+    private users ActiveUser(){
 
         String username =
                 currentUserProvider.getUsername();
 
         users user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        if (!user.isActivo()){throw new RuntimeException("user is not active");}
 
-        if(user.isActivo()){ return null;}
+        return user;
+    }
+
+
+    public TicketResponse create(TicketRequest ticketRequest) {
+        users user = ActiveUser();
 
         Ticket ticket = mapper.toDomainDTO(ticketRequest,user.getId());
         Ticket ticketSaved = repository.save(ticket);
@@ -42,6 +47,9 @@ public class TicketService {
     }
 
     public List<TicketResponse> findAll() {
+
+        users user = ActiveUser();
+
         List<Ticket> list = repository.listTickets();
         if (list == null) {return null;}
         return list
@@ -51,6 +59,9 @@ public class TicketService {
     }
 
     public List<TicketResponse> findByUserId(Long id){
+
+        users user = ActiveUser();
+
         List<Ticket> list = repository.findByuserId(id);
         if (list == null) {return null;}
         return list
@@ -60,11 +71,13 @@ public class TicketService {
     }
 
     public void delete(Long id) {
+
+        users user = ActiveUser();
+
         Ticket ticket = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("ticket not found"));
         ticket.setActivo(false);
         repository.save(ticket);
-        return;
     }
 
 

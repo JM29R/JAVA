@@ -12,11 +12,7 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 
 @AllArgsConstructor
-@SpringBootApplication(
-        exclude = {
-                DataSourceAutoConfiguration.class
-        }
-)
+@SpringBootApplication
 public class AgenteMercadoCentralAluralatamApplication {
     private final AgentService service;
 	public static void main(String[] args) {
@@ -30,11 +26,11 @@ public class AgenteMercadoCentralAluralatamApplication {
     CommandLineRunner test(AgentService service) {
         return args -> {
 
-            MessageRequest message = new MessageRequest("Hola que horarios de atencion manejan? y que metodos de pago?");
+            MessageRequest message = new MessageRequest("Hola que marca de cafe vendeb y en que presentacion?");
 
-            MenssageResponse response = service.MenssageResponse(message);
+            Long chatid=1L;
 
-            System.out.println("Response desde main: " + response.response());
+            String response = service.MenssageResponse(message,chatid);
 
 
         };

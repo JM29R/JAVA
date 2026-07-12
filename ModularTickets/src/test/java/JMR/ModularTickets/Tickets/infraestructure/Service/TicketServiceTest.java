@@ -15,14 +15,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class TicketServiceTest {
@@ -97,11 +94,63 @@ class TicketServiceTest {
         @Test
         void createUsernotFound(){
 
+            TicketRequest request =
+                    new TicketRequest("Problema login");
+
+            when(currentUserProvider.getUsername())
+                    .thenReturn("juan");
+
+            when(userRepository.findByUsername("juan"))
+                    .thenReturn(Optional.empty());
+
+
+            RuntimeException exception = assertThrows(
+                    RuntimeException.class,
+                    () -> ticketService.create(request)
+            );
+
+            assertEquals("Usuario no encontrado", exception.getMessage());
+
+            verify(currentUserProvider).getUsername();
+            verify(userRepository).findByUsername("juan");
+
+            verify(repository, never()).save(any());
+            verify(mapper, never()).toDomainDTO(any(), any());
+            verify(mapper, never()).ticketResponse(any());
+
+
 
         }
 
         @Test
         void createInactiveUser(){
+
+            TicketRequest request =
+                    new TicketRequest("Problema login");
+
+            users user = new users();
+            user.setId(1L);
+            user.setActivo(false);
+
+            when(currentUserProvider.getUsername())
+                    .thenReturn("juan");
+
+            when(userRepository.findByUsername("juan"))
+                    .thenReturn(Optional.of(user));
+
+            RuntimeException exception = assertThrows(
+                    RuntimeException.class,
+                    () -> ticketService.create(request)
+            );
+
+            assertEquals("user is not active", exception.getMessage());
+
+            verify(currentUserProvider).getUsername();
+            verify(userRepository).findByUsername("juan");
+
+            verify(repository, never()).save(any());
+            verify(mapper, never()).toDomainDTO(any(), any());
+            verify(mapper, never()).ticketResponse(any());
 
 
         }
@@ -113,6 +162,10 @@ class TicketServiceTest {
 
         @Test
         void findAllTest() {
+
+            users user = new users();
+            user.setId(1L);
+            user.setActivo(true);
 
             Ticket ticket = new Ticket();
             ticket.setTicket("Problema login");
@@ -126,6 +179,12 @@ class TicketServiceTest {
             when(mapper.ticketResponse(ticket))
                     .thenReturn(response);
 
+            when(currentUserProvider.getUsername())
+                    .thenReturn("juan");
+
+            when(userRepository.findByUsername("juan"))
+                    .thenReturn(Optional.of(user));
+
             List<TicketResponse> ticketsResult = ticketService.findAll();
 
             assertNotNull(ticketsResult);
@@ -134,6 +193,8 @@ class TicketServiceTest {
 
             verify(repository).listTickets();
             verify(mapper).ticketResponse(ticket);
+            verify(currentUserProvider).getUsername();
+            verify(userRepository).findByUsername("juan");
 
 
         }
@@ -145,6 +206,7 @@ class TicketServiceTest {
 
         @Test
         void findByUserIdSuccessfullyTest() {
+
             Ticket ticket = new Ticket();
             ticket.setTicket("Problema login");
 
@@ -153,11 +215,20 @@ class TicketServiceTest {
 
             users user = new users();
             user.setId(1L);
+            user.setActivo(true);
 
             when(repository.findByuserId(user.getId()))
                     .thenReturn(tickets);
+
             when(mapper.ticketResponse(ticket))
                     .thenReturn(response);
+
+            when(currentUserProvider.getUsername())
+                    .thenReturn("juan");
+
+            when(userRepository.findByUsername("juan"))
+                    .thenReturn(Optional.of(user));
+
             List<TicketResponse> ticketsResult = ticketService.findByUserId(user.getId());
 
             assertNotNull(ticketsResult);
@@ -166,18 +237,9 @@ class TicketServiceTest {
 
             verify(repository).findByuserId(user.getId());
             verify(mapper).ticketResponse(ticket);
+            verify(currentUserProvider).getUsername();
+            verify(userRepository).findByUsername("juan");
         }
-
-        @Test
-        void findByUserIdNotFound(){
-
-        }
-
-        @Test
-        void findByUserIdInactiveUser(){
-
-        }
-
 
     }
 
@@ -185,29 +247,69 @@ class TicketServiceTest {
     class deteleTest{
         @Test
         void deleteSuccessfullyTest() {
+
             Long id = 1L;
+
+            users user = new users();
+            user.setId(1L);
+            user.setActivo(true);
+
             Ticket ticket = new Ticket();
+            ticket.setActivo(true);
+
+            when(currentUserProvider.getUsername())
+                    .thenReturn("juan");
+
+            when(userRepository.findByUsername("juan"))
+                    .thenReturn(Optional.of(user));
+
             when(repository.findById(id))
-                .thenReturn(Optional.of(ticket));
+                    .thenReturn(Optional.of(ticket));
+
             when(repository.save(ticket))
-                .thenReturn(ticket);
+                    .thenReturn(ticket);
 
             ticketService.delete(id);
 
             assertFalse(ticket.isActivo());
 
+            verify(currentUserProvider).getUsername();
+            verify(userRepository).findByUsername("juan");
             verify(repository).findById(id);
             verify(repository).save(ticket);
         }
 
         @Test
-        void deleteInactiveUserTest() {
-
-
-        }
-
-        @Test
         void deleteNotFoundTest() {
+
+            Long id = 1L;
+
+            users user = new users();
+            user.setId(1L);
+            user.setActivo(true);
+
+            when(currentUserProvider.getUsername())
+                    .thenReturn("juan");
+
+            when(userRepository.findByUsername("juan"))
+                    .thenReturn(Optional.of(user));
+
+            when(repository.findById(id))
+                    .thenReturn(Optional.empty());
+
+            RuntimeException exception = assertThrows(
+                    RuntimeException.class,
+                    () -> ticketService.delete(id)
+            );
+
+            assertEquals("ticket not found", exception.getMessage());
+
+            verify(currentUserProvider).getUsername();
+            verify(userRepository).findByUsername("juan");
+            verify(repository).findById(id);
+
+            verify(repository, never()).save(any());
+
 
 
         }

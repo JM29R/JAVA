@@ -1,17 +1,14 @@
 package JMR.AgenteMercadoCentralALURALATAM.AgentModule.api;
 
 
-import JMR.AgenteMercadoCentralALURALATAM.AgentModule.api.dto.MenssageResponse;
+
 import JMR.AgenteMercadoCentralALURALATAM.AgentModule.api.dto.MessageRequest;
 import JMR.AgenteMercadoCentralALURALATAM.AgentModule.domain.model.Answer;
-import JMR.AgenteMercadoCentralALURALATAM.AgentModule.domain.model.Context;
-import JMR.AgenteMercadoCentralALURALATAM.AgentModule.domain.model.Prompt;
 import JMR.AgenteMercadoCentralALURALATAM.AgentModule.domain.model.Question;
-import JMR.AgenteMercadoCentralALURALATAM.AgentModule.infraestruture.AI.Gemini;
+import JMR.AgenteMercadoCentralALURALATAM.AgentModule.domain.port.AiModelPort;
+import JMR.AgenteMercadoCentralALURALATAM.AgentModule.domain.service.KnowledgeAgent;
 import JMR.AgenteMercadoCentralALURALATAM.AgentModule.infraestruture.AI.Groq;
-import JMR.AgenteMercadoCentralALURALATAM.AgentModule.infraestruture.AI.Intencion;
-import JMR.AgenteMercadoCentralALURALATAM.AgentModule.infraestruture.prompt.PromptBuilder;
-import JMR.AgenteMercadoCentralALURALATAM.AgentModule.infraestruture.retrieval.ContextBuilder;
+import JMR.AgenteMercadoCentralALURALATAM.PedidosModule.api.PedidosService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,37 +16,38 @@ import org.springframework.stereotype.Service;
 @Service
 public class AgentService {
 
+    private final KnowledgeAgent knowledgeAgent;
+
     private final Groq groq;
 
-    private final Gemini gemini;
+    private final PedidosService pedidosService;
 
-    private final PromptBuilder promptBuilder;
-
-    private final ContextBuilder contextBuilder;
-
-    public MenssageResponse MenssageResponse(MessageRequest request){
+    public String MenssageResponse(MessageRequest request, Long chatId) {
 
         Question question = new Question(request.message());
 
-        Intencion intencion = groq.Detectedintent(question);
-        if(intencion == Intencion.Pedido){
+        Answer answer = knowledgeAgent.ask(question);
 
-            //camino de pedidos
+        if (answer != null && answer.answer().startsWith("Pedido")) {
 
-            return null;
+            String intencion = answer.answer();
 
-        }else{
+            String pedidos = null;
 
-            Context context = contextBuilder.retrieve(question);
+            switch (intencion) {
+                case "Pedido_CREAR",
+                     "Pedido_AGREGAR",
+                     "Pedido_QUITAR" -> {
 
-            Prompt prompt=  promptBuilder.build(question, context);
+                    pedidos = groq.ExtractPedido(question);
+                }
+            }
 
-            Answer answer = gemini.generate(prompt);
+            return pedidosService.CreatebyTelegram(answer, pedidos, chatId);
 
-            System.out.println("Answer desde service: " + answer);
+        } else {
 
-            return new MenssageResponse(answer.answer());
-
+            return answer.answer();
         }
 
 

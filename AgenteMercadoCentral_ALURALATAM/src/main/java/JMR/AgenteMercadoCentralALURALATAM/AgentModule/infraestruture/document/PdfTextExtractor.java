@@ -19,7 +19,6 @@ public class PdfTextExtractor {
              PDDocument document = Loader.loadPDF(inputStream.readAllBytes())) {
 
             PDFTextStripper stripper = new PDFTextStripper();
-            System.out.println("docmento extraido: "+  stripper.getText(document));
 
             return stripper.getText(document);
 

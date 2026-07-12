@@ -7,8 +7,9 @@ import JMR.AgenteMercadoCentralALURALATAM.AgentModule.domain.model.Question;
 import JMR.AgenteMercadoCentralALURALATAM.AgentModule.domain.port.AiModelPort;
 import JMR.AgenteMercadoCentralALURALATAM.AgentModule.domain.port.ContextProviderPort;
 import JMR.AgenteMercadoCentralALURALATAM.AgentModule.domain.port.PromptBuilderPort;
+import org.springframework.stereotype.Service;
 
-
+@Service
 public class DefaultKnowledgeAgent implements KnowledgeAgent {
     private final ContextProviderPort contextProvider;
     private final PromptBuilderPort promptBuilder;
@@ -29,6 +30,11 @@ public class DefaultKnowledgeAgent implements KnowledgeAgent {
 
         Context context =
                 contextProvider.retrieve(question);
+
+        if (context.value() != null && context.value().startsWith("Pedido")) {
+
+            return new Answer(context.value());
+        }
 
         Prompt prompt =
                 promptBuilder.build(question, context);

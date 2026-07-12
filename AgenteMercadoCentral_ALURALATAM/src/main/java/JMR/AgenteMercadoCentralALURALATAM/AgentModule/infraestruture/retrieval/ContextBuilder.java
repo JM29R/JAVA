@@ -7,8 +7,8 @@ import JMR.AgenteMercadoCentralALURALATAM.AgentModule.infraestruture.AI.Groq;
 import JMR.AgenteMercadoCentralALURALATAM.AgentModule.infraestruture.document.PdfTextExtractor;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
-
 import java.io.IOException;
+
 @Component
 @AllArgsConstructor
 public class ContextBuilder implements ContextProviderPort {
@@ -21,6 +21,10 @@ public class ContextBuilder implements ContextProviderPort {
     public Context retrieve(Question question) {
 
         String Detectedintent = groq.Detectedintent(question).name();
+
+        if (Detectedintent != null && Detectedintent.startsWith("Pedido")) {
+            return new Context(Detectedintent);
+        }
 
         try {
             String text = pdfTextExtractor.read(Detectedintent +".pdf");

@@ -89,7 +89,13 @@ Antes de ejecutar el proyecto, asegúrate de tener:
 | `TELEGRAM_BOT_TOKEN` | Token del bot de Telegram | `123456:ABC...` |
 | `TELEGRAM_BOT_USERNAME` | Username del bot | `@MiBotMercadoBot` |
 
+## MEJORAS
 
+- Mejora en PROMPTS.
+. Mejorar Coneccion con TELEGRAM.
+- Front-end basico para manejo de pedidos.
+- Integracion con Spring-Security.
+- Despliegue en OCI.
 
 ## 📬 Contacto
 

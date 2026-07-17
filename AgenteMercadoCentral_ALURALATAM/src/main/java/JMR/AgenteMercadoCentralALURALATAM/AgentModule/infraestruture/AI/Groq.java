@@ -203,7 +203,7 @@ public class Groq  {
             
             8. Pedido_AGREGAR y Pedido_QUITAR solo aplican si el usuario modifica un pedido existente.
             
-            9. La respuesta debe ser exactamente uno de estos valores:
+            9. La respuesta debe ser exactamente uno de estos valores del enum:
             
             Pedido_CONSULTAS
             Pedido_CREAR
@@ -215,6 +215,16 @@ public class Groq  {
             PoliticadeAtencionalClienteyDevolucionesCASO2
             PreguntasFrecuentesCASO3
             ReglamentoInternoyProcedimientosOperativosCASO4
+            
+            - Devuelve exclusivamente el nombre exacto del enum.
+            - No agregues llaves {}.
+            - No agregues comillas.
+            - No devuelvas JSON.
+            - No escribas explicaciones, comentarios ni texto adicional.
+            - La respuesta debe contener una única línea con un único valor del enum.
+            
+            Ejemplo de respuesta válida:
+            Pedido_CREAR
             
             ========================================
             MENSAJE DEL CLIENTE
@@ -259,6 +269,8 @@ public class Groq  {
 
 
     public Intencion Detectedintent(Question question) {
+
+        System.out.println("Clasificando: " + question.value());
 
        Intencion respuesta = chatClient.prompt(PROMPTDetectedIntent.formatted(question.value()))
                             .call()

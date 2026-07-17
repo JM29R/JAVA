@@ -2,6 +2,7 @@ package JMR.AgenteMercadoCentralALURALATAM.PedidosModule.api;
 
 
 import JMR.AgenteMercadoCentralALURALATAM.AgentModule.domain.model.Answer;
+import JMR.AgenteMercadoCentralALURALATAM.PedidosModule.domain.Estado;
 import JMR.AgenteMercadoCentralALURALATAM.PedidosModule.domain.Pedidos;
 import JMR.AgenteMercadoCentralALURALATAM.PedidosModule.domain.PedidosRepository;
 import lombok.AllArgsConstructor;
@@ -40,6 +41,7 @@ public class PedidosService {
                 Pedidos p2 = new Pedidos();
                 p2.setIdTelegram(IdTelegram);
                 p2.setPedido(pedidos);
+                p2.setEstado(Estado.Pendiente);
                 pedidosRepository.save(p2);
                 return "Pedido creado correctamente";
             }

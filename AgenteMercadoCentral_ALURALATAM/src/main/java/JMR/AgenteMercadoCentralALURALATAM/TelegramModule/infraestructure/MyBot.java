@@ -47,6 +47,7 @@ public class MyBot implements SpringLongPollingBot {
         return updates -> {
             for (Update update : updates) {
                 if (update.hasMessage() && update.getMessage().hasText()) {
+                   try{
                     String text = update.getMessage().getText();
                     Long chatId = update.getMessage().getChatId();
 
@@ -64,13 +65,10 @@ public class MyBot implements SpringLongPollingBot {
                             .text(response)
                             .build();
 
-                    try {
+
                         telegramClient.execute(message);
-                    } catch (TelegramApiException e) {
-                        System.out.println("ERROR enviando mensaje");
-                        System.out.println("   Chat ID: " + chatId);
-                        System.out.println("   Mensaje: " + text);
-                        System.out.println("   Error: " + e.getMessage());
+                    } catch (Exception e) {
+                       System.err.println("Error procesando update " + update.getUpdateId());
                         e.printStackTrace();
                     }
                 }

@@ -24,6 +24,8 @@ public class AgentService {
 
     public String MenssageResponse(MessageRequest request, Long chatId) {
 
+        System.out.println("MenssageRequest " + request.message() );
+
         Question question = new Question(request.message());
 
         Answer answer = knowledgeAgent.ask(question);

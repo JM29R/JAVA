@@ -4,6 +4,8 @@ import JMR.AgenteMercadoCentralALURALATAM.AgentModule.api.AgentService;
 
 import JMR.AgenteMercadoCentralALURALATAM.AgentModule.api.dto.MenssageResponse;
 import JMR.AgenteMercadoCentralALURALATAM.AgentModule.api.dto.MessageRequest;
+import JMR.AgenteMercadoCentralALURALATAM.AgentModule.domain.model.Question;
+import JMR.AgenteMercadoCentralALURALATAM.AgentModule.infraestruture.AI.Groq;
 import lombok.AllArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -15,6 +17,7 @@ import org.springframework.context.annotation.Bean;
 @SpringBootApplication
 public class AgenteMercadoCentralAluralatamApplication {
     private final AgentService service;
+    private final Groq groq;
 	public static void main(String[] args) {
         SpringApplication.run(AgenteMercadoCentralAluralatamApplication.class, args);
 
@@ -26,11 +29,9 @@ public class AgenteMercadoCentralAluralatamApplication {
     CommandLineRunner test(AgentService service) {
         return args -> {
 
-            MessageRequest message = new MessageRequest("Hola que marca de cafe vendeb y en que presentacion?");
+            Question q = new Question("Hola que metodos de pago manejan?");
 
-            Long chatid=1L;
-
-            String response = service.MenssageResponse(message,chatid);
+            groq.Detectedintent(q);
 
 
         };

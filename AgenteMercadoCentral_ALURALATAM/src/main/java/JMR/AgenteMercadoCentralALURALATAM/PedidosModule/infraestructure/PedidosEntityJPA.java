@@ -22,5 +22,5 @@ public class PedidosEntityJPA {
     private String Pedido;
 
     @Enumerated(EnumType.STRING)
-    private Estado estado;
+    private Estado estado = Estado.Pendiente;
 }
